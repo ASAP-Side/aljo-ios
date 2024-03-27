@@ -7,5 +7,11 @@ let dependencies = Dependencies(
     .github(path: "Alamofire/Alamofire", requirement: .exact("5.6.3")),
     .github(path: "ReactiveX/RxSwift", requirement: .exact("6.6.0")),
   ],
+  swiftPackageManager: [
+    .remote(
+      url: "https://github.com/kakao/kakao-ios-sdk",
+      requirement: .upToNextMajor(from: "2.20.0")
+    )
+  ],
   platforms: [.iOS]
 )
