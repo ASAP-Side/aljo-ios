@@ -41,6 +41,10 @@ public extension UIImage {
     
     // alert
     public static let party_popper: UIImage = ASAPKitAsset.Alert.partyPopper.image
+    
+    // auth logo
+    public static let kakao: UIImage = ASAPKitAsset.AuthLogo.kakao.image
+    public static let apple: UIImage = ASAPKitAsset.AuthLogo.apple.image
   }
 }
 // swiftlint: enable all
