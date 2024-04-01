@@ -20,9 +20,11 @@ let targets: [Target] = [
     product: .app,
     bundleId: environmentValues.organizationName + "." + environmentValues.name,
     deploymentTarget: environmentValues.deployTarget,
-    infoPlist: .default,
+    infoPlist: .extendingDefault(with: [
+      "UILaunchStoryboardName": "LaunchScreen"
+    ]),
     sources: ["Sources/**"],
-    resources: [],
+    resources: ["Resources/**"],
     scripts: [.swiftLintTargetScript],
     dependencies: ModulePaths.Feature.allCases.map { TargetDependency.feature(target: $0, type: .interface) }
     + ModulePaths.Domain.allCases.map { TargetDependency.domain(target: $0, type: .interface) }
