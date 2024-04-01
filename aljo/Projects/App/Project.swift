@@ -24,8 +24,7 @@ let targets: [Target] = [
     sources: ["Sources/**"],
     resources: [],
     scripts: [.swiftLintTargetScript],
-    dependencies: ModulePaths.Feature.allCases.map { TargetDependency.feature(target: $0, type: .interface) }
-    + ModulePaths.Domain.allCases.map { TargetDependency.domain(target: $0, type: .interface) }
+    dependencies: ModulePaths.Domain.allCases.map { TargetDependency.domain(target: $0, type: .interface) }
     + ModulePaths.Core.allCases.map { TargetDependency.core(target: $0, type: .interface) },
     settings: settings
   )
