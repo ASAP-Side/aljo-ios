@@ -4,18 +4,18 @@
 //
 //  Copyright (c) 2024 Minii All rights reserved.
 
-import BaseFeatureImplementation
+import BaseFeatureInterface
 
-class ExampleViewModel: ViewModelable {
-  struct Input {
+public class ExampleViewModel: ViewModelable {
+  public struct Input {
     
   }
   
-  struct Output {
+  public struct Output {
     
   }
   
-  func transform(to input: Input) -> Output {
+  public func transform(to input: Input) -> Output {
     return Output()
   }
 }

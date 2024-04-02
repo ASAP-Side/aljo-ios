@@ -11,7 +11,7 @@ let project = Project.app(
     .implements(
       module: .feature(.GroupFeature),
       dependencies: [
-        .feature(target: .BaseFeature, type: .implementation)
+        .feature(target: .BaseFeature, type: .interface)
       ]
     )
   ]

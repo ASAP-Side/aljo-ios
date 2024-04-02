@@ -8,7 +8,6 @@ import EnvironmentPlugin
 let project = Project.app(
   to: "HomeFeature",
   targets: [
-    .implements(module: .feature(.BaseFeature)),
     .implements(module: .feature(.HomeFeature))
   ]
 )
