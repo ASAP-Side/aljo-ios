@@ -26,9 +26,8 @@ let project = Project.app(
     ),
     .demo(
       module: .feature(.AuthFeature),
-      dependencies: [
-        .feature(target: .AuthFeature, type: .implementation)
-      ]
+      dependencies: [.feature(target: .AuthFeature, type: .implementation)],
+      infoPlistValue: ["LSApplicationQueriesSchemes": ["kakaokompassauth"]]
     )
   ]
 )

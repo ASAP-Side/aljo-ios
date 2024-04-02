@@ -63,16 +63,19 @@ public extension Target {
 public extension Target {
   static func demo(
     module: ModulePaths,
-    dependencies: [TargetDependency] = []
+    dependencies: [TargetDependency] = [],
+    infoPlistValue: [String: InfoPlist.Value] = [:]
   ) -> Target {
-    let infoFile: InfoPlist = .extendingDefault(
-      with: [
-        "UIMainStoryboardFile": "",
-        "UILaunchStoryboardName": "LaunchScreen"
-      ]
-    )
+    var defaultInfoPlistValue: [String: InfoPlist.Value] = [
+      "UIMainStoryboardFile": "",
+      "UILaunchStoryboardName": "LaunchScreen"
+    ]
     
-    return TargetSpec(infoPlist: infoFile, sources: .demo, resources: ["Demo/Resources/**"], dependencies: dependencies)
+    infoPlistValue.forEach { key, value in
+      defaultInfoPlistValue.updateValue(value, forKey: key)
+    }
+    
+    return TargetSpec(infoPlist: .extendingDefault(with: defaultInfoPlistValue), sources: .demo, resources: ["Demo/Resources/**"], dependencies: dependencies)
       .toTarget(with: module.targetName(type: .demo), product: .app)
   }
   
