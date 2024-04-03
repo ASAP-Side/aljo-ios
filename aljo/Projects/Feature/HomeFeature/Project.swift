@@ -6,9 +6,8 @@ import AljoPlugin
 import EnvironmentPlugin
 
 let project = Project.app(
-  to: "AuthDomain",
+  to: "HomeFeature",
   targets: [
-    .interface(module: .domain(.AuthDomain)),
-    .implements(module: .domain(.AuthDomain))
+    .implements(module: .feature(.HomeFeature))
   ]
 )

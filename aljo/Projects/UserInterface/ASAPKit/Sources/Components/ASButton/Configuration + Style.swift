@@ -28,10 +28,7 @@ public extension UIButton.Configuration {
     }
     
     var backgroundColor: UIColor? {
-      switch self {
-        case .text:   return .white
-        default:      return .clear
-      }
+      return .white
     }
     
     var selectedBackgroundColor: UIColor? {

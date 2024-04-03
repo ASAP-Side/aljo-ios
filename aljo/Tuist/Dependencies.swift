@@ -1,11 +1,13 @@
 import ProjectDescription
 
 let dependencies = Dependencies(
-  carthage: [
-    .binary(path: "https://dl.google.com/dl/firebase/ios/carthage/FirebaseMessagingBinary.json", requirement: .exact("10.14.0")),
-    .github(path: "SnapKit/SnapKit", requirement: .exact("5.6.0")),
-    .github(path: "Alamofire/Alamofire", requirement: .exact("5.6.3")),
-    .github(path: "ReactiveX/RxSwift", requirement: .exact("6.6.0")),
-  ],
+  swiftPackageManager: SwiftPackageManagerDependencies(
+    [
+      .remote(url: "https://github.com/SnapKit/SnapKit.git", requirement: .exact("5.6.0")),
+      .remote(url: "https://github.com/Alamofire/Alamofire.git", requirement: .exact("5.8.1")),
+      .remote(url: "https://github.com/ReactiveX/RxSwift.git", requirement: .exact("6.6.0")),
+      .remote(url: "https://github.com/kakao/kakao-ios-sdk.git", requirement: .exact("2.20.0"))
+    ]
+  ),
   platforms: [.iOS]
 )

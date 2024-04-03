@@ -6,6 +6,8 @@
 
 import UIKit
 
+import ASAPKit
+
 enum DemoCategory: Int, CustomStringConvertible, CaseIterable {
   case systemConfiguration
   case component
@@ -14,14 +16,14 @@ enum DemoCategory: Int, CustomStringConvertible, CaseIterable {
   
   var description: String {
     switch self {
-    case .systemConfiguration:
-      return "시스템 설정"
-    case .component:
-      return "COMPONENTS"
-    case .container:
-      return "CONTAINER"
-    case .controller:
-      return "CONTROLLER"
+      case .systemConfiguration:
+        return "시스템 설정"
+      case .component:
+        return "COMPONENTS"
+      case .container:
+        return "CONTAINER"
+      case .controller:
+        return "CONTROLLER"
     }
   }
   
@@ -30,14 +32,14 @@ enum DemoCategory: Int, CustomStringConvertible, CaseIterable {
     
     allCases.forEach {
       switch $0 {
-      case .systemConfiguration:
-        dictionary.updateValue(SystemConfiguration.allCases, forKey: $0)
-      case .component:
-        dictionary.updateValue(ComponentsCategory.allCases, forKey: $0)
-      case .container:
-        dictionary.updateValue(ContainerCategory.allCases, forKey: $0)
-      case .controller:
-        dictionary.updateValue(ControllerCategory.allCases, forKey: $0)
+        case .systemConfiguration:
+          dictionary.updateValue(SystemConfiguration.allCases, forKey: $0)
+        case .component:
+          dictionary.updateValue(ComponentsCategory.allCases, forKey: $0)
+        case .container:
+          dictionary.updateValue(ContainerCategory.allCases, forKey: $0)
+        case .controller:
+          dictionary.updateValue(ControllerCategory.allCases, forKey: $0)
       }
     }
     return dictionary
@@ -125,42 +127,47 @@ enum ContainerCategory: DemoDetail, CustomStringConvertible, CaseIterable {
   
   var description: String {
     switch self {
-    case .listView:
-      return "ASListView"
-      case .calendarView:
-        return "CalendarView"
+      case .listView:
+        return "ASListView"
+        case .calendarView:
+          return "CalendarView"
     }
   }
   
   var instance: UIViewController {
     switch self {
-    case .listView:
-      return ASListViewDemoController()
-      case .calendarView:
-        return ASCalendarDemoController()
+      case .listView:
+        return ASListViewDemoController()
+        case .calendarView:
+          return ASCalendarDemoController()
     }
   }
 }
 
 enum ControllerCategory: DemoDetail, CustomStringConvertible, CaseIterable {
   case bottomSheet
+  case imagePicker
   case alert
   
   var description: String {
     switch self {
-    case .bottomSheet:
-      return "ASBottomSheet"
-    case .alert:
-      return "ASAlert"
+      case .bottomSheet:
+        return "ASBottomSheet"
+      case .imagePicker:
+        return "ASImagePicker"
+      case .alert:
+        return "ASAlert"
     }
   }
   
   var instance: UIViewController {
     switch self {
-    case .bottomSheet:
-      return ASBottomSheetDemoController()
-    case .alert:
-      return ASAlertDemoController()
+      case .bottomSheet:
+        return ASBottomSheetDemoController()
+      case .imagePicker:
+        return ASImagePickerDemoController()
+      case .alert:
+        return ASAlertDemoController()
     }
   }
 }
