@@ -10,12 +10,28 @@ import UIKit
 
 import ASAPKit
 
+import RxSwift
+import RxCocoa
 import SnapKit
 
 public final class LoginViewController: UIViewController {
   private let kakaoColor = UIColor(red: 254/255, green: 228/255, blue: 0, alpha: 1)
+  
+  private let disposeBag = DisposeBag()
+  private let authController: AuthController
+  
   private let appleSignInButton = UIButton()
   private let kakaoSignInButton = UIButton()
+  
+  public init(authController: AuthController) {
+    self.authController = authController
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  @available(*, unavailable, message: "스토리 보드로 생성할 수 없습니다.")
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
   
   public override func viewDidLoad() {
     configureUI()
