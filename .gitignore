@@ -61,7 +61,7 @@ DerivedData/
 
 ### Tuist derived files ###
 graph.dot
-aljo/Derived/signing
+aljo/Derived/
 
 
 ### Tuist managed dependencies ###
