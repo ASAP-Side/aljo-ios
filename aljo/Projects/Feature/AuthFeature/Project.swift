@@ -11,6 +11,7 @@ let project = Project.app(
     .implements(
       module: .feature(.AuthFeature),
       dependencies: [
+        .feature(target: .BaseFeature, type: .interface),
         .design(target: .ASAPKit, type: .single),
         .rxSwift,
         .rxCocoa

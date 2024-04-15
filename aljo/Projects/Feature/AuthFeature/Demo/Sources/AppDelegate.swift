@@ -12,7 +12,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   ) -> Bool {
     window = UIWindow(frame: UIScreen.main.bounds)
     window?.backgroundColor = .systemBackground
-    let controller = LoginViewController()
+    let controller = LoginViewController(authController: AuthController(window: window))
     window?.rootViewController = controller
     window?.makeKeyAndVisible()
     return true
