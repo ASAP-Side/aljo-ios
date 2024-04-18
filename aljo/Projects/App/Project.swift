@@ -4,8 +4,8 @@ import AljoPlugin
 import EnvironmentPlugin
 
 let configurations: [Configuration] = [
-  .debug(name: "Debug"),
-  .release(name: "Release")
+  .debug(name: "Debug", xcconfig: .relativeToRoot("XCConfig/API_KEY.xcconfig")),
+  .release(name: "Release", xcconfig: .relativeToRoot("XCConfig/API_KEY.xcconfig"))
 ]
 
 let settings = Settings.settings(
@@ -21,7 +21,15 @@ let targets: [Target] = [
     bundleId: environmentValues.organizationName + "." + environmentValues.name,
     deploymentTarget: environmentValues.deployTarget,
     infoPlist: .extendingDefault(with: [
-      "UILaunchStoryboardName": "LaunchScreen"
+      "UILaunchStoryboardName": "LaunchScreen",
+      "LSApplicationQueriesSchemes": ["kakaokompassauth"],
+      "KakaoNativeAppKey": "${KAKAO_NATIVE_APP_KEY}",
+      "URL types": [
+        [
+          "Document Role": "Editor",
+         "URL Schemes": ["kakao${KAKAO_NATIVE_APP_KEY}"]
+        ]
+      ]
     ]),
     sources: ["Sources/**"],
     resources: ["Resources/**"],

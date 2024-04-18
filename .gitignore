@@ -62,7 +62,7 @@ DerivedData/
 ### Tuist derived files ###
 graph.dot
 aljo/Derived/
-
+aljo/XCConfig/
 
 ### Tuist managed dependencies ###
 aljo/Tuist/Dependencies
