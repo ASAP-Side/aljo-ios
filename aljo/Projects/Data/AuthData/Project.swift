@@ -19,6 +19,7 @@ let project = Project.app(
       module: .data(.AuthData),
       dependencies: [
         .data(target: .AuthData, type: .interface),
+        .core(target: .AJNetwork, type: .implementation),
         .rxSwift
       ]
     ),

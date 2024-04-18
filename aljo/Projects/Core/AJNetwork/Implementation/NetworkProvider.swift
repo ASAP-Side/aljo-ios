@@ -12,7 +12,7 @@ import Foundation
 import RxSwift
 import Alamofire
 
-struct NetworkProvider: Provider {
+public struct NetworkProvider: Provider {
   private let session: Session
   
   init(session: Session = .default) {
