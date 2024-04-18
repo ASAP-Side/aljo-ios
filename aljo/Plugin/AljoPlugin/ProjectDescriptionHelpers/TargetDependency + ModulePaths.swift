@@ -51,4 +51,14 @@ public extension TargetDependency {
       path: .relativeToDesign(target.rawValue)
     )
   }
+  
+  static func data(
+    target: ModulePaths.Data,
+    type: TargetType
+  ) -> TargetDependency {
+    return .project(
+      target: target.targetName(type: type),
+      path: .relativeToData(target.rawValue)
+    )
+  }
 }

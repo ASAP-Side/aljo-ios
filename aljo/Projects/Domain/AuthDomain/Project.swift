@@ -21,7 +21,6 @@ let project = Project.app(
         .rxSwift
       ]
     ),
-    .demo(module: .domain(.AuthDomain)),
     .testing(module: .domain(.AuthDomain)),
     .tests(module: .domain(.AuthDomain))
   ]
