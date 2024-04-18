@@ -11,16 +11,22 @@ import BaseFeatureInterface
 import RxSwift
 import RxCocoa
 
-final class LoginViewModel: ViewModelable {
-  struct Input {
+public final class LoginViewModel: ViewModelable {
+  public struct Input {
 
   }
   
-  struct Output {
+  public struct Output {
     
   }
   
-  func transform(to input: Input) -> Output {
+  private let authorizationManager: AuthorizationManager
+  
+  public func transform(to input: Input) -> Output {
     return Output()
+  }
+  
+  public init(authorizationManager: AuthorizationManager) {
+    self.authorizationManager = authorizationManager
   }
 }

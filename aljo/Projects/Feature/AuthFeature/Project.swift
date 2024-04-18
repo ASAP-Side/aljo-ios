@@ -14,7 +14,10 @@ let project = Project.app(
         .feature(target: .BaseFeature, type: .interface),
         .design(target: .ASAPKit, type: .single),
         .rxSwift,
-        .rxCocoa
+        .rxCocoa,
+        .rxKakaoSDKCommon,
+        .rxKakaoSDKAuth,
+        .rxKakaoSDKUser
       ]
     ),
     .tests(
@@ -27,8 +30,7 @@ let project = Project.app(
     ),
     .demo(
       module: .feature(.AuthFeature),
-      dependencies: [.feature(target: .AuthFeature, type: .implementation)],
-      infoPlistValue: ["LSApplicationQueriesSchemes": ["kakaokompassauth"]]
+      dependencies: [.feature(target: .AuthFeature, type: .implementation)]
     )
   ]
 )

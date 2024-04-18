@@ -18,13 +18,13 @@ public final class LoginViewController: UIViewController {
   private let kakaoColor = UIColor(red: 254/255, green: 228/255, blue: 0, alpha: 1)
   
   private let disposeBag = DisposeBag()
-  private let authController: AuthController
+  private let viewModel: LoginViewModel
   
   private let appleSignInButton = UIButton()
   private let kakaoSignInButton = UIButton()
   
-  public init(authController: AuthController) {
-    self.authController = authController
+  public init(viewModel: LoginViewModel) {
+    self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
   
