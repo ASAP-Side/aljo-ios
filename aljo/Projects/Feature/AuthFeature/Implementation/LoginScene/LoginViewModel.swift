@@ -13,7 +13,8 @@ import RxCocoa
 
 public final class LoginViewModel: ViewModelable {
   public struct Input {
-
+    let appleSignInTap: ControlEvent<Void>
+    let kakaoSignInTap: ControlEvent<Void>
   }
   
   public struct Output {

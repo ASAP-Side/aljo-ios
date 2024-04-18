@@ -10,7 +10,9 @@ let project = Project.app(
   targets: [
     .interface(
       module: .domain(.AuthDomain),
-      dependencies: [.rxSwift]
+      dependencies: [
+        .rxSwift
+      ]
     ),
     .implements(
       module: .domain(.AuthDomain),

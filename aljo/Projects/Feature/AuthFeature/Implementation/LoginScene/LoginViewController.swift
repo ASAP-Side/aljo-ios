@@ -36,6 +36,15 @@ public final class LoginViewController: UIViewController {
   public override func viewDidLoad() {
     configureUI()
   }
+  
+  private func bind() {
+    let input = LoginViewModel.Input(
+      appleSignInTap: appleSignInButton.rx.tap,
+      kakaoSignInTap: kakaoSignInButton.rx.tap
+    )
+    
+    let output = viewModel.transform(to: input)
+  }
 }
 
 // MARK: Configure UI
