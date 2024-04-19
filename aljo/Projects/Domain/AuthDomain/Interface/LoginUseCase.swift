@@ -8,6 +8,8 @@
 
 import RxSwift
 
+public typealias IsNewUser = Bool
+
 public protocol LoginUseCase {
-  func excute(with service: AuthorizationService, token: String) -> Observable<Void>
+  func excute(with service: AuthorizationService, token: String) -> Observable<IsNewUser>
 }

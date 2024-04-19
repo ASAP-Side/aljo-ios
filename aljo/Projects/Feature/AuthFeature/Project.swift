@@ -13,6 +13,7 @@ let project = Project.app(
       dependencies: [
         .feature(target: .BaseFeature, type: .interface),
         .design(target: .ASAPKit, type: .single),
+        .domain(target: .AuthDomain, type: .interface),
         .rxSwift,
         .rxCocoa,
         .rxKakaoSDKCommon,
@@ -30,7 +31,10 @@ let project = Project.app(
     ),
     .demo(
       module: .feature(.AuthFeature),
-      dependencies: [.feature(target: .AuthFeature, type: .implementation)]
+      dependencies: [
+        .feature(target: .AuthFeature, type: .implementation),
+        .domain(target: .AuthDomain, type: .testing)
+      ]
     )
   ]
 )

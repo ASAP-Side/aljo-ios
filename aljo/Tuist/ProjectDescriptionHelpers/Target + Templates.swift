@@ -111,7 +111,7 @@ public extension Target {
   
   static func testing(
     module: ModulePaths,
-    product: Product = .unitTests,
+    product: Product = .staticLibrary,
     dependencies:  [TargetDependency] = [],
     resources: ResourceFileElements = []
   ) -> Target {

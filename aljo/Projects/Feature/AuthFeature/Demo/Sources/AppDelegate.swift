@@ -1,6 +1,7 @@
 import UIKit
 
 import AuthFeatureImplementation
+import AuthDomainTesting
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,7 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let authorizationManager = AuthorizationManager()
     let controller = LoginViewController(
       viewModel: LoginViewModel(
-        authorizationManager: authorizationManager
+        authorizationManager: authorizationManager,
+        loginUseCase: StubLoginUseCase()
       )
     )
     window?.rootViewController = controller
