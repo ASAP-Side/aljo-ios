@@ -24,10 +24,10 @@ let targets: [Target] = [
       "UILaunchStoryboardName": "LaunchScreen",
       "LSApplicationQueriesSchemes": ["kakaokompassauth"],
       "KakaoNativeAppKey": "${KAKAO_NATIVE_APP_KEY}",
-      "URL types": [
+      "CFBundleURLTypes": [
         [
-          "Document Role": "Editor",
-         "URL Schemes": ["kakao${KAKAO_NATIVE_APP_KEY}"]
+          "CFBundleTypeRole": "Editor",
+         "CFBundleURLSchemes": ["kakao${KAKAO_NATIVE_APP_KEY}"]
         ]
       ]
     ]),
