@@ -18,6 +18,7 @@ let project = Project.app(
       module: .domain(.AuthDomain),
       dependencies: [
         .domain(target: .AuthDomain, type: .interface),
+        .data(target: .AuthData, type: .interface),
         .rxSwift
       ]
     ),
