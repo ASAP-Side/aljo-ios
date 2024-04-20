@@ -20,8 +20,8 @@ public final class LoginViewModel: ViewModelable {
   }
   
   public struct Input {
-    let appleSignInTap: ControlEvent<Void>
-    let kakaoSignInTap: ControlEvent<Void>
+    let appleLoginTap: ControlEvent<Void>
+    let kakaoLoginTap: ControlEvent<Void>
   }
   
   public struct Output {
@@ -41,7 +41,7 @@ public final class LoginViewModel: ViewModelable {
   }
   
   public func transform(to input: Input) -> Output {
-    let appleToken = input.appleSignInTap
+    let appleToken = input.appleLoginTap
       .flatMap {
         return self.authorizationManager.signInWithApple()
       }
@@ -49,7 +49,7 @@ public final class LoginViewModel: ViewModelable {
         return (.apple, user)
       }
     
-    let kakaoToken = input.kakaoSignInTap
+    let kakaoToken = input.kakaoLoginTap
       .flatMap {
         return self.authorizationManager.signInWithKakao()
       }
@@ -59,7 +59,6 @@ public final class LoginViewModel: ViewModelable {
     
     let authorization = Observable.merge(appleToken, kakaoToken)
       .share()
-      .debug()
     
     let logginSuccess = authorization.flatMap { (service, token) in
       return self.loginUseCase.excute(with: service, token: token)
@@ -72,6 +71,7 @@ public final class LoginViewModel: ViewModelable {
         self.requestToCoordinator(to: nextPage)
       }
       .map { _ in }
+      .share()
     
     let isLoggingIn = Observable.from([
       authorization.map { _ in true },

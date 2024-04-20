@@ -20,8 +20,8 @@ public final class LoginViewController: UIViewController {
   private let disposeBag = DisposeBag()
   private let viewModel: LoginViewModel
   
-  private let appleSignInButton = UIButton()
-  private let kakaoSignInButton = UIButton()
+  private let appleLoginButton = UIButton()
+  private let kakaoLoginButton = UIButton()
   private let activityIndicator = UIActivityIndicatorView()
   
   public init(viewModel: LoginViewModel) {
@@ -41,8 +41,8 @@ public final class LoginViewController: UIViewController {
   
   private func bind() {
     let input = LoginViewModel.Input(
-      appleSignInTap: appleSignInButton.rx.tap,
-      kakaoSignInTap: kakaoSignInButton.rx.tap
+      appleLoginTap: appleLoginButton.rx.tap,
+      kakaoLoginTap: kakaoLoginButton.rx.tap
     )
     
     let output = viewModel.transform(to: input)
@@ -64,14 +64,14 @@ extension LoginViewController {
     configureConstraints()
     view.backgroundColor = .systemBackground
     
-    appleSignInButton.configuration = makeSignInButtonConfiguration(
+    appleLoginButton.configuration = makeLoginButtonConfiguration(
       title: "Apple로 시작하기",
       image: .Icon.apple,
       backgroundColor: .black01,
       foregroundColor: ASAPKitAsset.Gray.white.color
     )
     
-    kakaoSignInButton.configuration = makeSignInButtonConfiguration(
+    kakaoLoginButton.configuration = makeLoginButtonConfiguration(
       title: "카카오로 시작하기",
       image: .Icon.kakao,
       backgroundColor: kakaoColor,
@@ -80,20 +80,20 @@ extension LoginViewController {
   }
   
   private func configureHierarchy() {
-    [appleSignInButton, kakaoSignInButton, activityIndicator].forEach {
+    [appleLoginButton, kakaoLoginButton, activityIndicator].forEach {
       view.addSubview($0)
     }
   }
   
   private func configureConstraints() {
-    appleSignInButton.snp.makeConstraints {
+    appleLoginButton.snp.makeConstraints {
       $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-30)
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
     }
     
-    kakaoSignInButton.snp.makeConstraints {
-      $0.bottom.equalTo(appleSignInButton.snp.top).offset(-10)
+    kakaoLoginButton.snp.makeConstraints {
+      $0.bottom.equalTo(appleLoginButton.snp.top).offset(-10)
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
     }
@@ -103,7 +103,7 @@ extension LoginViewController {
     }
   }
   
-  private func makeSignInButtonConfiguration(
+  private func makeLoginButtonConfiguration(
     title: String,
     image: UIImage,
     backgroundColor: UIColor,
