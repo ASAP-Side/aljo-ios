@@ -22,6 +22,7 @@ public final class LoginViewController: UIViewController {
   
   private let appleSignInButton = UIButton()
   private let kakaoSignInButton = UIButton()
+  private let activityIndicator = UIActivityIndicatorView()
   
   public init(viewModel: LoginViewModel) {
     self.viewModel = viewModel
@@ -35,6 +36,7 @@ public final class LoginViewController: UIViewController {
   
   public override func viewDidLoad() {
     configureUI()
+    bind()
   }
   
   private func bind() {
@@ -44,6 +46,14 @@ public final class LoginViewController: UIViewController {
     )
     
     let output = viewModel.transform(to: input)
+    
+    output.isLoggingIn
+      .drive(activityIndicator.rx.isAnimating)
+      .disposed(by: disposeBag)
+    
+    output.logginComplete
+      .drive()
+      .disposed(by: disposeBag)
   }
 }
 
@@ -70,7 +80,7 @@ extension LoginViewController {
   }
   
   private func configureHierarchy() {
-    [appleSignInButton, kakaoSignInButton].forEach {
+    [appleSignInButton, kakaoSignInButton, activityIndicator].forEach {
       view.addSubview($0)
     }
   }
@@ -86,6 +96,10 @@ extension LoginViewController {
       $0.bottom.equalTo(appleSignInButton.snp.top).offset(-10)
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
+    }
+    
+    activityIndicator.snp.makeConstraints {
+      $0.centerX.centerY.equalToSuperview()
     }
   }
   

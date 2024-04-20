@@ -13,6 +13,12 @@ import RxSwift
 import RxCocoa
 
 public final class LoginViewModel: ViewModelable {
+  enum NextPage {
+    case home
+    case basicSetting
+    case errorAlert
+  }
+  
   public struct Input {
     let appleSignInTap: ControlEvent<Void>
     let kakaoSignInTap: ControlEvent<Void>
@@ -20,11 +26,19 @@ public final class LoginViewModel: ViewModelable {
   
   public struct Output {
     let isLoggingIn: Driver<Bool>
-    let logginSuccess: Driver<Void>
+    let logginComplete: Driver<Void>
   }
   
   private let authorizationManager: AuthorizationManager
   private let loginUseCase: LoginUseCase
+  
+  public init(
+    authorizationManager: AuthorizationManager,
+    loginUseCase: LoginUseCase
+  ) {
+    self.authorizationManager = authorizationManager
+    self.loginUseCase = loginUseCase
+  }
   
   public func transform(to input: Input) -> Output {
     let appleToken = input.appleSignInTap
@@ -44,12 +58,18 @@ public final class LoginViewModel: ViewModelable {
       }
     
     let authorization = Observable.merge(appleToken, kakaoToken)
+      .share()
+      .debug()
     
     let logginSuccess = authorization.flatMap { (service, token) in
       return self.loginUseCase.excute(with: service, token: token)
     }
-      .do { _ in
-        // TODO: 화면전환
+      .map { $0 ? .basicSetting : .home }
+      .catch({ _ in
+        return .just(.errorAlert)
+      })
+      .do { nextPage in
+        self.requestToCoordinator(to: nextPage)
       }
       .map { _ in }
     
@@ -61,15 +81,11 @@ public final class LoginViewModel: ViewModelable {
     
     return Output(
       isLoggingIn: isLoggingIn.asDriver(onErrorJustReturn: false),
-      logginSuccess: logginSuccess.asDriver(onErrorJustReturn: ())
+      logginComplete: logginSuccess.asDriver(onErrorJustReturn: ())
     )
   }
   
-  public init(
-    authorizationManager: AuthorizationManager,
-    loginUseCase: LoginUseCase
-  ) {
-    self.authorizationManager = authorizationManager
-    self.loginUseCase = loginUseCase
+  private func requestToCoordinator(to next: NextPage) {
+    // TODO: 화면 전환
   }
 }
