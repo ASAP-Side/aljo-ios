@@ -6,8 +6,9 @@
 //  Copyright © 2024 com.asap. All rights reserved.
 //
 
-import RxSwift
 import AuthDomainInterface
+
+import RxSwift
 
 protocol AuthRepository {
   func login(with service: AuthorizationService) -> Observable<Void>

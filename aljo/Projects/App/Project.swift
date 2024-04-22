@@ -33,6 +33,7 @@ let targets: [Target] = [
     ]),
     sources: ["Sources/**"],
     resources: ["Resources/**"],
+    entitlements: .relativeToRoot("Entitlements/aljoapp.entitlements"),
     scripts: [.swiftLintTargetScript],
     dependencies: ModulePaths.Feature.allCases.map { TargetDependency.feature(target: $0, type: .implementation) }
     + ModulePaths.Domain.allCases.map { TargetDependency.domain(target: $0, type: .interface) }
