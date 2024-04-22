@@ -15,7 +15,7 @@ import RxSwift
 public final class AJAuthRepository: AuthRepository {
   private let networkProvider: Provider
   
-  init(networkProvider: Provider) {
+  public init(networkProvider: Provider) {
     self.networkProvider = networkProvider
   }
   
