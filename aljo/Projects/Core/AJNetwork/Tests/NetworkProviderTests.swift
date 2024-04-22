@@ -8,7 +8,7 @@
 
 import XCTest
 @testable import AJNetworkTesting
-@testable import AJNetworkImplemenetation
+@testable import AJNetworkImplementation
 
 import Alamofire
 import RxBlocking

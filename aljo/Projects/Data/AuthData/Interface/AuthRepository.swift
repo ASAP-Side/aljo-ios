@@ -10,6 +10,6 @@ import AuthDomainInterface
 
 import RxSwift
 
-protocol AuthRepository {
-  func login(with service: AuthorizationService) -> Observable<Void>
+public protocol AuthRepository {
+  func login(with service: AuthorizationService, token: String) -> Observable<Void>
 }
