@@ -8,6 +8,6 @@
 
 import CoreData
 
-public protocol CoreDataWorkerProtocol: AnyObject {
+public protocol CoreDataWorker: AnyObject {
   func performBackgroundTask(_ block: @escaping (NSManagedObjectContext) -> Void)
 }

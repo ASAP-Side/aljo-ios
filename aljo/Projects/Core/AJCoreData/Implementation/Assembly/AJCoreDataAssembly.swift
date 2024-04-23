@@ -13,7 +13,7 @@ import Swinject
 public final class AJCoreDataAssembly: Assembly {
   public func assemble(container: Container) {
     container.register(CoreDataStorage.self) { _ in
-      DefaultCoreDataStorage()
+      AJCoreDataStorage()
     }
   }
 }
