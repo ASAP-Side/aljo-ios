@@ -10,8 +10,8 @@ import AJNetworkInterface
 
 import Swinject
 
-final class AJNetworkAssembly: Assembly {
-  func assemble(container: Container) {
+public final class AJNetworkAssembly: Assembly {
+  public func assemble(container: Container) {
     container.register(NetworkProvider.self) { _ in
       AJNetworkProvider()
     }
