@@ -9,7 +9,7 @@ import Foundation
 
 import Alamofire
 
-public protocol Router: URLRequestConvertible {
+public protocol NetworkRouter: URLRequestConvertible {
   var baseURL: String { get }
   var method: HTTPMethod { get }
   var path: String { get }
@@ -17,7 +17,7 @@ public protocol Router: URLRequestConvertible {
   var behavior: RequestBehavior { get }
 }
 
-public extension Router {
+public extension NetworkRouter {
   func asURLRequest() throws -> URLRequest {
     let urlString = baseURL + path
     var request = try URLRequest(url: urlString, method: method, headers: headers)

@@ -12,8 +12,8 @@ import Swinject
 
 final class AJNetworkAssembly: Assembly {
   func assemble(container: Container) {
-    container.register(Provider.self) { _ in
-      NetworkProvider()
+    container.register(NetworkProvider.self) { _ in
+      AJNetworkProvider()
     }
   }
 }
