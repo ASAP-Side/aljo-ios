@@ -8,13 +8,14 @@ import EnvironmentPlugin
 let targets: [Target] = [
   .interface(
     module: .core(.AJKeychain),
-    dependencies: [.external(name: "RxSwift")]
+    dependencies: [.rxSwift]
   ),
   .implements(
     module: .core(.AJKeychain),
     dependencies: [
-      .external(name: "RxSwift"),
-      .core(target: .AJKeychain, type: .interface)
+      .core(target: .AJKeychain, type: .interface),
+      .rxSwift,
+      .swinject
     ]
   )
 ]
