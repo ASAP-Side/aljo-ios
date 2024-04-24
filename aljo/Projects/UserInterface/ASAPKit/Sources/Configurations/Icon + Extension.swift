@@ -41,6 +41,10 @@ public extension UIImage {
     
     // alert
     public static let party_popper: UIImage = ASAPKitAsset.Alert.partyPopper.image
+    
+    // profile
+    public static let camera_button: UIImage = ASAPKitAsset.Profile.cameraButton.image
+    public static let profile_default: UIImage = ASAPKitAsset.Profile.profileDefault.image
   }
 }
 // swiftlint: enable all
