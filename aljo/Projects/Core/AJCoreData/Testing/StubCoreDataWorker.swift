@@ -9,7 +9,7 @@
 import AJCoreDataInterface
 import CoreData
 
-public final class StubCoreDataWorker: CoreDataWorkerProtocol {
+public final class StubCoreDataWorker: CoreDataWorker {
   public static let `default` = StubCoreDataWorker()
   
   lazy var persistentContainer: NSPersistentContainer = {

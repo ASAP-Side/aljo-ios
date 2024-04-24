@@ -20,7 +20,8 @@ let project = Project.app(
       dependencies: [
         .core(target: .AJNetwork, type: .interface),
         .alamofire,
-        .rxSwift
+        .rxSwift,
+        .swinject
       ]
     ),
     .testing(

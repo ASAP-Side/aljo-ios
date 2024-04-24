@@ -10,7 +10,7 @@ import AJNetworkInterface
 
 import Alamofire
 
-public enum DummyRouter: Router {
+public enum DummyRouter: NetworkRouter {
   case dummyGet
   case dummyPost
   case dummy

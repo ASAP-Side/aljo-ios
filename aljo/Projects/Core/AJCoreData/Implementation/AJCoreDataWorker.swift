@@ -1,5 +1,5 @@
 //
-//  CoreDataWorker.swift
+//  AJCoreDataWorker.swift
 //  AJCoreDataImplemenetation
 //
 //  Created by 이태영 on 2/3/24.
@@ -9,8 +9,8 @@
 import AJCoreDataInterface
 import CoreData
 
-final class CoreDataWorker: CoreDataWorkerProtocol {
-  static let `default` = CoreDataWorker()
+final class AJCoreDataWorker: CoreDataWorker {
+  static let `default` = AJCoreDataWorker()
   
   private let persistentContainer: NSPersistentContainer
   

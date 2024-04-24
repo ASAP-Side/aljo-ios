@@ -8,5 +8,6 @@ public extension TargetDependency {
   static let rxTest = Self.external(name: "RxTest")
   static let snapKit = Self.external(name: "SnapKit")
   static let alamofire = Self.external(name: "Alamofire")
+  static let swinject = Self.external(name: "Swinject")
 }
 
