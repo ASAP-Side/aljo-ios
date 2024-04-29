@@ -13,14 +13,16 @@ let project = Project.app(
       dependencies: [
         .feature(target: .BaseFeature, type: .interface),
         .design(target: .ASAPKit, type: .single),
+        .rxSwift,
+        .rxCocoa,
+        .snapKit
       ]
     ),
-    
-      .demo(
-        module: .feature(.GroupFeature),
-        dependencies: [
-          .feature(target: .GroupFeature, type: .implementation)
-        ]
-      )
+    .demo(
+      module: .feature(.GroupFeature),
+      dependencies: [
+        .feature(target: .GroupFeature, type: .implementation)
+      ]
+    )
   ]
 )
