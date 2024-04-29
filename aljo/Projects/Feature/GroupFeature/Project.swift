@@ -11,8 +11,16 @@ let project = Project.app(
     .implements(
       module: .feature(.GroupFeature),
       dependencies: [
-        .feature(target: .BaseFeature, type: .interface)
+        .feature(target: .BaseFeature, type: .interface),
+        .design(target: .ASAPKit, type: .single),
       ]
-    )
+    ),
+    
+      .demo(
+        module: .feature(.GroupFeature),
+        dependencies: [
+          .feature(target: .GroupFeature, type: .implementation)
+        ]
+      )
   ]
 )
