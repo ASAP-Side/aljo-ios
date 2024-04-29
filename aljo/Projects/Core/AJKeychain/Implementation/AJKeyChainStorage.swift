@@ -1,14 +1,16 @@
 //
-//  DefaultKeyChainStorage.swift
+//  AJKeyChainStorage.swift
 //  AJKeychainInterface
 //
 //  Copyright (c) 2024 Minii All rights reserved.
 
 import Foundation
-import RxSwift
+
 import AJKeychainInterface
 
-final class DefaultKeyChainStorage: KeyChainStorage {
+import RxSwift
+
+final class AJKeyChainStorage: KeyChainStorage {
   private let attributes: [String: Any]
   private let scheduler = ConcurrentDispatchQueueScheduler(qos: .background)
   

@@ -18,7 +18,8 @@ let project = Project.app(
       module: .core(.AJCoreData),
       dependencies: [
         .core(target: .AJCoreData, type: .interface),
-        .rxSwift
+        .rxSwift,
+        .swinject
       ]
     ),
     .testing(
