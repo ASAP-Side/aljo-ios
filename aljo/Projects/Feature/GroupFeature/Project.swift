@@ -12,6 +12,7 @@ let project = Project.app(
       module: .feature(.GroupFeature),
       dependencies: [
         .feature(target: .BaseFeature, type: .interface),
+        .domain(target: .GroupDomain, type: .interface),
         .design(target: .ASAPKit, type: .single),
         .rxSwift,
         .rxCocoa,
@@ -21,7 +22,8 @@ let project = Project.app(
     .demo(
       module: .feature(.GroupFeature),
       dependencies: [
-        .feature(target: .GroupFeature, type: .implementation)
+        .feature(target: .GroupFeature, type: .implementation),
+        .domain(target: .GroupDomain, type: .implementation)
       ]
     )
   ]
