@@ -20,6 +20,7 @@ public extension ModulePaths {
   
   enum Domain: String, TargetPathConvertible {
     case AuthDomain
+    case GroupDomain
   }
   
   enum Data: String, TargetPathConvertible {
