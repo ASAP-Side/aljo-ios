@@ -21,6 +21,7 @@ final class GroupDemoRootViewController: UIViewController {
   
   override func viewDidLoad() {
     view.addSubview(pushButton)
+    view.backgroundColor = .systemBackground
     
     NSLayoutConstraint.activate([
       pushButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -28,12 +29,15 @@ final class GroupDemoRootViewController: UIViewController {
     ])
     
     let action = UIAction { [weak self] _ in
-      let viewController = GroupPrivacySelectionViewController()
+      let viewController = GroupPrivacySelectionViewController(
+        viewModel: GroupPrivacySelectionViewModel()
+      )
       self?.navigationController?.pushViewController(
         viewController,
         animated: true
       )
     }
+    navigationController?.navigationBar.isTranslucent = false
     
     pushButton.addAction(action, for: .touchUpInside)
   }

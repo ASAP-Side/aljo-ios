@@ -10,9 +10,13 @@ import UIKit
 
 import ASAPKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
 
 public final class GroupPrivacySelectionViewController: UIViewController {
+  private let viewModel: GroupPrivacySelectionViewModel
+  private let disposeBag = DisposeBag()
   // MARK: Components
   private let stepProgressView: UIProgressView = {
     let progressView = UIProgressView()
@@ -49,23 +53,42 @@ public final class GroupPrivacySelectionViewController: UIViewController {
     title: "비공개"
   )
   
+  private let passwordTextFieldTitleLabel: UILabel = {
+    let label = UILabel()
+    label.font = .pretendard(.caption2)
+    label.textColor = .black03
+    return label
+  }()
+  
   private let passwordTextField: ASUnderBarTextField = {
     let textField = ASUnderBarTextField()
     textField.placeHolder = "비밀번호 4자리를 입력해주세요"
     textField.maxTextCount = 4
+    textField.isHidden = true
     return textField
   }()
   
   private let nextButton: UIButton = {
     let button = ASRectButton(style: .fill)
     button.title = "다음"
+    button.isEnabled = false
     return button
   }()
   
+  public init(viewModel: GroupPrivacySelectionViewModel) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  @available(*, unavailable, message: "스토리 보드로 생성할 수 없습니다.")
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   public override func viewDidLoad() {
+    navigationController?.navigationBar.backgroundColor = .systemBackground
     configureUI()
-    
-    
+    bind()
   }
   
   public override func touchesBegan(
@@ -74,17 +97,49 @@ public final class GroupPrivacySelectionViewController: UIViewController {
   ) {
     view.endEditing(true)
   }
+  
+  private func bind() {
+    let input = GroupPrivacySelectionViewModel.Input(
+      tapPublic: publicButton.rx.tap,
+      tapPrivate: privateButton.rx.tap,
+      password: passwordTextField.rx.text.orEmpty
+    )
+    
+    let output = viewModel.transform(to: input)
+    
+    output.isPublicSelected
+      .drive(publicButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.isPrivateSelected
+      .drive(privateButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.isPublicSelected
+      .drive(passwordTextField.rx.isHidden)
+      .disposed(by: disposeBag)
+    
+    output.passwordTitle
+      .drive(passwordTextFieldTitleLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    output.isNextEnable
+      .drive(nextButton.rx.isEnabled)
+      .disposed(by: disposeBag)
+  }
 }
 
 // MARK: Configure UI
 extension GroupPrivacySelectionViewController {
   private func configureUI() {
-    configureHirearchy()
-    configureConstraints()
+    view.backgroundColor = .systemBackground
     
     if #available(iOS 17.0, *) {
       view.keyboardLayoutGuide.usesBottomSafeArea = false
     }
+    
+    configureHirearchy()
+    configureConstraints()
   }
   
   private func configureHirearchy() {
@@ -94,6 +149,7 @@ extension GroupPrivacySelectionViewController {
       subTitleLabel,
       publicButton,
       privateButton,
+      passwordTextFieldTitleLabel,
       passwordTextField,
       nextButton
     ].forEach {
@@ -128,6 +184,11 @@ extension GroupPrivacySelectionViewController {
       $0.top.equalTo(publicButton.snp.bottom).offset(8)
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
+    }
+    
+    passwordTextFieldTitleLabel.snp.makeConstraints {
+      $0.top.equalTo(privateButton.snp.bottom).offset(30)
+      $0.leading.equalToSuperview().offset(20)
     }
     
     passwordTextField.snp.makeConstraints {
