@@ -51,9 +51,12 @@ public final class GroupPrivacySelectionViewModel: ViewModelable {
       .map { self.validGroupPasswordUseCase.excute(with: $0) }
       .asDriver(onErrorJustReturn: false)
     
-    let passwordTitle = input.password
-      .map { $0.isEmpty ? "" : "비밀번호" }
-      .asDriver(onErrorJustReturn: "")
+    let passwordTitle = Observable.merge(
+      input.password.map { $0.isEmpty ? "" : "비밀번호" },
+      input.tapPublic.map { _ in "" }
+    )
+      .distinctUntilChanged()
+    .asDriver(onErrorJustReturn: "")
     
     let isNextEnable = Driver.combineLatest(
       isPublicSelected,

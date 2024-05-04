@@ -26,6 +26,12 @@ public final class GroupPrivacySelectionViewController: UIViewController {
     return progressView
   }()
   
+  private let contentsScrollView: UIScrollView = {
+    let scrollView = UIScrollView()
+    scrollView.contentInset.top = 20
+    return scrollView
+  }()
+  
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.text = "어떤 알람을 만드시겠어요?"
@@ -88,17 +94,11 @@ public final class GroupPrivacySelectionViewController: UIViewController {
   public override func viewDidLoad() {
     navigationController?.navigationBar.backgroundColor = .systemBackground
     configureUI()
-    bind()
+    bind(with: viewModel)
+    bindKeyboard()
   }
   
-  public override func touchesBegan(
-    _ touches: Set<UITouch>,
-    with event: UIEvent?
-  ) {
-    view.endEditing(true)
-  }
-  
-  private func bind() {
+  private func bind(with viewModel: GroupPrivacySelectionViewModel) {
     let input = GroupPrivacySelectionViewModel.Input(
       tapPublic: publicButton.rx.tap,
       tapPrivate: privateButton.rx.tap,
@@ -129,10 +129,73 @@ public final class GroupPrivacySelectionViewController: UIViewController {
   }
 }
 
+// MARK: Handling Keyboard Visibility
+extension GroupPrivacySelectionViewController {
+  private func bindKeyboard() {
+    NotificationCenter.default.rx
+      .notification(UIResponder.keyboardWillShowNotification)
+      .withUnretained(self)
+      .map { (object, _) -> CGFloat in
+        return 20 - (object.nextButton.frame.minY - object.passwordTextField.frame.maxY)
+      }
+      .subscribe(with: self, onNext: { object, needMoveY in
+        if object.nextButton.frame.minY - object.passwordTextField.frame.maxY < 20 {
+          object.contentsScrollView.setContentOffset(CGPoint(x: 0, y: needMoveY), animated: true)
+        }
+        
+        object.updateNextButtonLayout(
+          bottomOffset: -20
+        )
+      })
+      .disposed(by: disposeBag)
+    
+    NotificationCenter.default.rx
+      .notification(UIResponder.keyboardWillHideNotification)
+      .withUnretained(self)
+      .subscribe(with: self, onNext: { object, _ in
+        object.contentsScrollView.setContentOffset(CGPoint(x: 0, y: -20), animated: true)
+        
+        object.updateNextButtonLayout(
+          bottomOffset: -object.scrollViewKeyboardLayoutOffset()
+        )
+      })
+      .disposed(by: disposeBag)
+    
+    // 키보드가 올라와있는 상태에서 publicButton이 탭됐을 때 예외 처리
+    publicButton.rx.tap
+      .subscribe(with: self, onNext: { object, _ in
+        object.view.endEditing(true)
+      })
+      .disposed(by: disposeBag)
+    
+    let tapGesture = UITapGestureRecognizer()
+    tapGesture.cancelsTouchesInView = false
+    contentsScrollView.addGestureRecognizer(tapGesture)
+    
+    tapGesture.rx.event
+      .subscribe(with: self, onNext: { object, _ in
+        object.view.endEditing(true)
+      })
+      .disposed(by: disposeBag)
+  }
+  
+  private func updateNextButtonLayout(bottomOffset: CGFloat) {
+    nextButton.snp.updateConstraints {
+      $0.bottom.equalTo(contentsScrollView.keyboardLayoutGuide.snp.top)
+        .offset(bottomOffset)
+    }
+    
+    UIView.animate(withDuration: 0.1) {
+      self.view.layoutIfNeeded()
+    }
+  }
+}
+
 // MARK: Configure UI
 extension GroupPrivacySelectionViewController {
   private func configureUI() {
     view.backgroundColor = .systemBackground
+    view.clipsToBounds = true
     
     if #available(iOS 17.0, *) {
       view.keyboardLayoutGuide.usesBottomSafeArea = false
@@ -145,6 +208,12 @@ extension GroupPrivacySelectionViewController {
   private func configureHirearchy() {
     [
       stepProgressView,
+      contentsScrollView
+    ].forEach {
+      view.addSubview($0)
+    }
+    
+    [
       titleLabel,
       subTitleLabel,
       publicButton,
@@ -152,9 +221,10 @@ extension GroupPrivacySelectionViewController {
       passwordTextFieldTitleLabel,
       passwordTextField,
       nextButton
-    ].forEach {
-      view.addSubview($0)
-    }
+    ]
+      .forEach {
+        contentsScrollView.addSubview($0)
+      }
   }
   
   private func configureConstraints() {
@@ -164,8 +234,17 @@ extension GroupPrivacySelectionViewController {
       $0.height.equalTo(2)
     }
     
+    contentsScrollView.snp.makeConstraints {
+      $0.top.equalTo(stepProgressView.snp.top)
+      $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
+      $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
+      $0.bottom.equalToSuperview()
+      $0.width.equalTo(contentsScrollView.contentLayoutGuide.snp.width)
+      $0.height.equalTo(contentsScrollView.contentLayoutGuide.snp.height)
+    }
+    
     titleLabel.snp.makeConstraints {
-      $0.top.equalTo(stepProgressView.snp.bottom).offset(20)
+      $0.top.equalTo(contentsScrollView.contentLayoutGuide.snp.top)
       $0.leading.equalToSuperview().offset(20)
     }
     
@@ -198,20 +277,20 @@ extension GroupPrivacySelectionViewController {
     }
     
     nextButton.snp.makeConstraints {
-      $0.bottom.equalTo(view.keyboardLayoutGuide.snp.top)
-        .offset(-safeAreaBottomInset())
+      $0.bottom.equalTo(contentsScrollView.keyboardLayoutGuide.snp.top)
+        .offset(-scrollViewKeyboardLayoutOffset())
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
       $0.height.equalToSuperview().multipliedBy(0.065)
     }
   }
   
-  private func safeAreaBottomInset() -> CGFloat {
+  private func scrollViewKeyboardLayoutOffset() -> CGFloat {
     let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-    if scene?.windows.first?.safeAreaInsets.bottom == 0 {
-      return 10
+    if scene?.windows.first?.safeAreaInsets.bottom != 0 {
+      return 0
     }
     
-    return scene?.windows.first?.safeAreaInsets.bottom ?? .zero
+    return 20
   }
 }

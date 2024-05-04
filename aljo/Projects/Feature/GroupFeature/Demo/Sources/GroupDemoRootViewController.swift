@@ -40,7 +40,7 @@ final class GroupDemoRootViewController: UIViewController {
         animated: true
       )
     }
-    navigationController?.navigationBar.isTranslucent = false
+    navigationController?.navigationBar.isTranslucent = true
     
     pushButton.addAction(action, for: .touchUpInside)
   }
