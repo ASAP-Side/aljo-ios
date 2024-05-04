@@ -14,4 +14,6 @@ public final class AJValidGroupPasswordUseCase: ValidGroupPasswordUseCase {
     let isValid = password.range(of: passwordRegex, options: .regularExpression) != nil
     return isValid
   }
+  
+  public init() { }
 }

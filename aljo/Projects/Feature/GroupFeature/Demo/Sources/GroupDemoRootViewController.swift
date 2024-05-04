@@ -9,6 +9,7 @@
 import UIKit
 
 import GroupFeatureImplementation
+import GroupDomainImplementation
 
 final class GroupDemoRootViewController: UIViewController {
   private let pushButton: UIButton = {
@@ -30,7 +31,9 @@ final class GroupDemoRootViewController: UIViewController {
     
     let action = UIAction { [weak self] _ in
       let viewController = GroupPrivacySelectionViewController(
-        viewModel: GroupPrivacySelectionViewModel()
+        viewModel: GroupPrivacySelectionViewModel(
+          validGroupPasswordUseCase: AJValidGroupPasswordUseCase()
+        )
       )
       self?.navigationController?.pushViewController(
         viewController,

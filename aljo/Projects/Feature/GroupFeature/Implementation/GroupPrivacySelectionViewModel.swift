@@ -7,6 +7,7 @@
 //
 
 import BaseFeatureInterface
+import GroupDomainInterface
 
 import RxCocoa
 import RxSwift
@@ -25,7 +26,13 @@ public final class GroupPrivacySelectionViewModel: ViewModelable {
     let isNextEnable: Driver<Bool>
   }
   
-  public init() { }
+  private let validGroupPasswordUseCase: ValidGroupPasswordUseCase
+  
+  public init(
+    validGroupPasswordUseCase: ValidGroupPasswordUseCase
+  ) {
+    self.validGroupPasswordUseCase = validGroupPasswordUseCase
+  }
   
   public func transform(to input: Input) -> Output {
     let isPublicSelected = Observable.merge(
@@ -41,7 +48,7 @@ public final class GroupPrivacySelectionViewModel: ViewModelable {
       .asDriver(onErrorJustReturn: false)
     
     let isPasswordValid = input.password
-      .map { self.validPassword($0) }
+      .map { self.validGroupPasswordUseCase.excute(with: $0) }
       .asDriver(onErrorJustReturn: false)
     
     let passwordTitle = input.password
@@ -62,11 +69,5 @@ public final class GroupPrivacySelectionViewModel: ViewModelable {
       passwordTitle: passwordTitle,
       isNextEnable: isNextEnable
     )
-  }
-  
-  private func validPassword(_ password: String) -> Bool {
-    let passwordRegex = "[0-9]{4}"
-    let a = password.range(of: passwordRegex, options: .regularExpression) != nil
-    return a
   }
 }
