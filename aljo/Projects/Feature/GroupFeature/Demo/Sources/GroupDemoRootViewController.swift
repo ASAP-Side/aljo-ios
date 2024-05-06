@@ -12,6 +12,7 @@ import GroupFeatureImplementation
 import GroupDomainImplementation
 
 final class GroupDemoRootViewController: UIViewController {
+  weak var coordinator: GroupCreateDemoCoordinator?
   private let pushButton: UIButton = {
     let button = UIButton()
     button.setTitle("push", for: .normal)
@@ -30,17 +31,8 @@ final class GroupDemoRootViewController: UIViewController {
     ])
     
     let action = UIAction { [weak self] _ in
-      let viewController = GroupPrivacySelectionViewController(
-        viewModel: GroupPrivacySelectionViewModel(
-          validGroupPasswordUseCase: AJValidGroupPasswordUseCase()
-        )
-      )
-      self?.navigationController?.pushViewController(
-        viewController,
-        animated: true
-      )
+      self?.coordinator?.navigateGroupPrivacySelection()
     }
-    navigationController?.navigationBar.isTranslucent = true
     
     pushButton.addAction(action, for: .touchUpInside)
   }

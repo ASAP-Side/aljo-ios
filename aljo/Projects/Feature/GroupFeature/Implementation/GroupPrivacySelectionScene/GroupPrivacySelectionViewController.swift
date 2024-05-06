@@ -26,10 +26,10 @@ public final class GroupPrivacySelectionViewController: UIViewController {
     return progressView
   }()
   
-  private let contentsScrollView: UIScrollView = {
-    let scrollView = UIScrollView()
-    scrollView.contentInset.top = 20
-    return scrollView
+  private let contentsView: UIView = {
+    let view = UIView()
+    view.clipsToBounds = true
+    return view
   }()
   
   private let titleLabel: UILabel = {
@@ -98,11 +98,16 @@ public final class GroupPrivacySelectionViewController: UIViewController {
     bindKeyboard()
   }
   
+  public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    view.endEditing(true)
+  }
+  
   private func bind(with viewModel: GroupPrivacySelectionViewModel) {
     let input = GroupPrivacySelectionViewModel.Input(
-      tapPublic: publicButton.rx.tap,
-      tapPrivate: privateButton.rx.tap,
-      password: passwordTextField.rx.text.orEmpty
+      publicTapped: publicButton.rx.tap,
+      privateTapped: privateButton.rx.tap,
+      password: passwordTextField.rx.text.orEmpty,
+      nextButtonTapped: nextButton.rx.tap
     )
     
     let output = viewModel.transform(to: input)
@@ -111,12 +116,17 @@ public final class GroupPrivacySelectionViewController: UIViewController {
       .drive(publicButton.rx.isSelected)
       .disposed(by: disposeBag)
     
-    output.isPrivateSelected
-      .drive(privateButton.rx.isSelected)
+    output.isPublicSelected
+      .drive(passwordTextField.rx.isHidden)
       .disposed(by: disposeBag)
     
     output.isPublicSelected
-      .drive(passwordTextField.rx.isHidden)
+      .map { _ in "" }
+      .drive(passwordTextField.rx.text)
+      .disposed(by: disposeBag)
+    
+    output.isPrivateSelected
+      .drive(privateButton.rx.isSelected)
       .disposed(by: disposeBag)
     
     output.passwordTitle
@@ -125,6 +135,10 @@ public final class GroupPrivacySelectionViewController: UIViewController {
     
     output.isNextEnable
       .drive(nextButton.rx.isEnabled)
+      .disposed(by: disposeBag)
+    
+    output.toNext
+      .drive()
       .disposed(by: disposeBag)
   }
 }
@@ -140,7 +154,9 @@ extension GroupPrivacySelectionViewController {
       }
       .subscribe(with: self, onNext: { object, needMoveY in
         if object.nextButton.frame.minY - object.passwordTextField.frame.maxY < 20 {
-          object.contentsScrollView.setContentOffset(CGPoint(x: 0, y: needMoveY), animated: true)
+          object.titleLabel.snp.updateConstraints {
+            $0.top.equalToSuperview().offset(-needMoveY)
+          }
         }
         
         object.updateNextButtonLayout(
@@ -153,26 +169,18 @@ extension GroupPrivacySelectionViewController {
       .notification(UIResponder.keyboardWillHideNotification)
       .withUnretained(self)
       .subscribe(with: self, onNext: { object, _ in
-        object.contentsScrollView.setContentOffset(CGPoint(x: 0, y: -20), animated: true)
+        object.titleLabel.snp.updateConstraints {
+          $0.top.equalToSuperview().offset(20)
+        }
         
         object.updateNextButtonLayout(
-          bottomOffset: -object.scrollViewKeyboardLayoutOffset()
+          bottomOffset: -object.contentsViewKeyboardLayoutOffset()
         )
       })
       .disposed(by: disposeBag)
     
-    // 키보드가 올라와있는 상태에서 publicButton이 탭됐을 때 예외 처리
+    //  키보드가 올라와있는 상태에서 publicButton이 탭됐을 때 예외 처리
     publicButton.rx.tap
-      .subscribe(with: self, onNext: { object, _ in
-        object.view.endEditing(true)
-      })
-      .disposed(by: disposeBag)
-    
-    let tapGesture = UITapGestureRecognizer()
-    tapGesture.cancelsTouchesInView = false
-    contentsScrollView.addGestureRecognizer(tapGesture)
-    
-    tapGesture.rx.event
       .subscribe(with: self, onNext: { object, _ in
         object.view.endEditing(true)
       })
@@ -181,7 +189,7 @@ extension GroupPrivacySelectionViewController {
   
   private func updateNextButtonLayout(bottomOffset: CGFloat) {
     nextButton.snp.updateConstraints {
-      $0.bottom.equalTo(contentsScrollView.keyboardLayoutGuide.snp.top)
+      $0.bottom.equalTo(contentsView.keyboardLayoutGuide.snp.top)
         .offset(bottomOffset)
     }
     
@@ -208,7 +216,7 @@ extension GroupPrivacySelectionViewController {
   private func configureHirearchy() {
     [
       stepProgressView,
-      contentsScrollView
+      contentsView
     ].forEach {
       view.addSubview($0)
     }
@@ -223,7 +231,7 @@ extension GroupPrivacySelectionViewController {
       nextButton
     ]
       .forEach {
-        contentsScrollView.addSubview($0)
+        contentsView.addSubview($0)
       }
   }
   
@@ -234,17 +242,15 @@ extension GroupPrivacySelectionViewController {
       $0.height.equalTo(2)
     }
     
-    contentsScrollView.snp.makeConstraints {
+    contentsView.snp.makeConstraints {
       $0.top.equalTo(stepProgressView.snp.top)
       $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
       $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
       $0.bottom.equalToSuperview()
-      $0.width.equalTo(contentsScrollView.contentLayoutGuide.snp.width)
-      $0.height.equalTo(contentsScrollView.contentLayoutGuide.snp.height)
     }
     
     titleLabel.snp.makeConstraints {
-      $0.top.equalTo(contentsScrollView.contentLayoutGuide.snp.top)
+      $0.top.equalToSuperview().offset(20)
       $0.leading.equalToSuperview().offset(20)
     }
     
@@ -277,15 +283,15 @@ extension GroupPrivacySelectionViewController {
     }
     
     nextButton.snp.makeConstraints {
-      $0.bottom.equalTo(contentsScrollView.keyboardLayoutGuide.snp.top)
-        .offset(-scrollViewKeyboardLayoutOffset())
+      $0.bottom.equalTo(contentsView.keyboardLayoutGuide.snp.top)
+        .offset(-contentsViewKeyboardLayoutOffset())
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
       $0.height.equalToSuperview().multipliedBy(0.065)
     }
   }
   
-  private func scrollViewKeyboardLayoutOffset() -> CGFloat {
+  private func contentsViewKeyboardLayoutOffset() -> CGFloat {
     let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
     if scene?.windows.first?.safeAreaInsets.bottom != 0 {
       return 0

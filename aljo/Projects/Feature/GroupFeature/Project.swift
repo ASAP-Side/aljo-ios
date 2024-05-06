@@ -14,6 +14,7 @@ let project = Project.app(
         .feature(target: .BaseFeature, type: .interface),
         .domain(target: .GroupDomain, type: .interface),
         .design(target: .ASAPKit, type: .single),
+        .shared(target: .FlowKit, type: .interface),
         .rxSwift,
         .rxCocoa,
         .snapKit

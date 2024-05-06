@@ -5,6 +5,7 @@ import GroupFeatureImplementation
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
+  var coordinator: GroupCreateDemoCoordinator?
   
   func application(
     _ application: UIApplication,
@@ -12,11 +13,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   ) -> Bool {
     window = UIWindow(frame: UIScreen.main.bounds)
     window?.backgroundColor = .systemBackground
-    let navigationController = UINavigationController(
-      rootViewController: GroupDemoRootViewController()
-    )
+    coordinator = GroupCreateDemoCoordinator(window: window)
+    coordinator?.start()
+    return true
+  }
+}
+
+final class GroupCreateDemoCoordinator {
+  private var childCoordinator: [GroupCreateCoordinator] = []
+  private let window: UIWindow?
+  private let navigationController = UINavigationController()
+  
+  init(window: UIWindow?) {
+    self.window = window
+  }
+  
+  func start() {
+    let controller = GroupDemoRootViewController()
+    controller.coordinator = self
+    navigationController.viewControllers = [controller]
     window?.rootViewController = navigationController
     window?.makeKeyAndVisible()
-    return true
+  }
+  
+  func navigateGroupPrivacySelection() {
+    let coordinator = AJGroupCreateCoordinator(
+      navigationController: navigationController
+    )
+    coordinator.start()
+    childCoordinator.append(coordinator)
   }
 }
