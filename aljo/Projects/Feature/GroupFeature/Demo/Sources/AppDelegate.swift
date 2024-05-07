@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 final class GroupCreateDemoCoordinator {
   private var childCoordinator: [GroupCreateCoordinator?] = []
   private let window: UIWindow?
-  private let navigationController = UINavigationController()
+  private let navigationController = ProgressNavigationViewController()
   private let assembler: Assembler
   
   init(
@@ -47,6 +47,7 @@ final class GroupCreateDemoCoordinator {
     let controller = GroupDemoRootViewController()
     controller.coordinator = self
     navigationController.viewControllers = [controller]
+    navigationController.stepCount = 4
     window?.rootViewController = navigationController
     window?.makeKeyAndVisible()
   }
@@ -54,7 +55,8 @@ final class GroupCreateDemoCoordinator {
   func navigateGroupPrivacySelection() {
     let coordinator = assembler.resolver.resolve(
       GroupCreateCoordinator.self,
-      arguments: navigationController, assembler
+      arguments: navigationController as UINavigationController,
+      assembler
     )
     coordinator?.start()
     childCoordinator.append(coordinator)

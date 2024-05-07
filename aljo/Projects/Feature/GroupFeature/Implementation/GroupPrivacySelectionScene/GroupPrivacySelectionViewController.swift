@@ -18,14 +18,6 @@ final class GroupPrivacySelectionViewController: UIViewController {
   private let viewModel: GroupPrivacySelectionViewModel
   private let disposeBag = DisposeBag()
   // MARK: Components
-  private let stepProgressView: UIProgressView = {
-    let progressView = UIProgressView()
-    progressView.progressTintColor = .red01
-    progressView.trackTintColor = .gray01
-    progressView.progress = 0.5
-    return progressView
-  }()
-  
   private let contentsView: UIView = {
     let view = UIView()
     view.clipsToBounds = true
@@ -213,7 +205,6 @@ extension GroupPrivacySelectionViewController {
   
   private func configureHirearchy() {
     [
-      stepProgressView,
       contentsView
     ].forEach {
       view.addSubview($0)
@@ -234,14 +225,8 @@ extension GroupPrivacySelectionViewController {
   }
   
   private func configureConstraints() {
-    stepProgressView.snp.makeConstraints {
-      $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-      $0.leading.trailing.equalToSuperview()
-      $0.height.equalTo(2)
-    }
-    
     contentsView.snp.makeConstraints {
-      $0.top.equalTo(stepProgressView.snp.top)
+      $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
       $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
       $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
       $0.bottom.equalToSuperview()
