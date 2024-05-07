@@ -1,6 +1,9 @@
 import UIKit
 
 import GroupFeatureImplementation
+import GroupDomainImplementation
+
+import Swinject
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -13,19 +16,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   ) -> Bool {
     window = UIWindow(frame: UIScreen.main.bounds)
     window?.backgroundColor = .systemBackground
-    coordinator = GroupCreateDemoCoordinator(window: window)
+    
+    let assembler = Assembler(
+      [
+        GroupFeatureAssembly(),
+        GroupDomainAssembly()
+      ]
+    )
+    coordinator = GroupCreateDemoCoordinator(window: window, assembler: assembler)
     coordinator?.start()
     return true
   }
 }
 
 final class GroupCreateDemoCoordinator {
-  private var childCoordinator: [GroupCreateCoordinator] = []
+  private var childCoordinator: [GroupCreateCoordinator?] = []
   private let window: UIWindow?
   private let navigationController = UINavigationController()
+  private let assembler: Assembler
   
-  init(window: UIWindow?) {
+  init(
+    window: UIWindow?,
+    assembler: Assembler
+  ) {
     self.window = window
+    self.assembler = assembler
   }
   
   func start() {
@@ -37,10 +52,11 @@ final class GroupCreateDemoCoordinator {
   }
   
   func navigateGroupPrivacySelection() {
-    let coordinator = AJGroupCreateCoordinator(
-      navigationController: navigationController
+    let coordinator = assembler.resolver.resolve(
+      GroupCreateCoordinator.self,
+      arguments: navigationController, assembler
     )
-    coordinator.start()
+    coordinator?.start()
     childCoordinator.append(coordinator)
   }
 }

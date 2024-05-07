@@ -14,7 +14,7 @@ import RxCocoa
 import RxSwift
 import SnapKit
 
-public final class GroupPrivacySelectionViewController: UIViewController {
+final class GroupPrivacySelectionViewController: UIViewController {
   private let viewModel: GroupPrivacySelectionViewModel
   private let disposeBag = DisposeBag()
   // MARK: Components
@@ -81,7 +81,7 @@ public final class GroupPrivacySelectionViewController: UIViewController {
     return button
   }()
   
-  public init(viewModel: GroupPrivacySelectionViewModel) {
+  init(viewModel: GroupPrivacySelectionViewModel) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
@@ -91,14 +91,14 @@ public final class GroupPrivacySelectionViewController: UIViewController {
     fatalError("init(coder:) has not been implemented")
   }
   
-  public override func viewDidLoad() {
+  override func viewDidLoad() {
     navigationController?.navigationBar.backgroundColor = .systemBackground
     configureUI()
     bind(with: viewModel)
     bindKeyboard()
   }
   
-  public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     view.endEditing(true)
   }
   
@@ -159,9 +159,7 @@ extension GroupPrivacySelectionViewController {
           }
         }
         
-        object.updateNextButtonLayout(
-          bottomOffset: -20
-        )
+        object.updateNextButtonLayout(bottomOffset: -20)
       })
       .disposed(by: disposeBag)
     

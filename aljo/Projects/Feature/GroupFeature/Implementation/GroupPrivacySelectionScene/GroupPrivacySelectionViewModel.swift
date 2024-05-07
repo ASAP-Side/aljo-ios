@@ -11,16 +11,16 @@ import GroupDomainInterface
 
 import RxCocoa
 import RxSwift
-
-public final class GroupPrivacySelectionViewModel: ViewModelable {
-  public struct Input {
+ 
+final class GroupPrivacySelectionViewModel: ViewModelable {
+  struct Input {
     let publicTapped: ControlEvent<Void>
     let privateTapped: ControlEvent<Void>
     let password: ControlProperty<String>
     let nextButtonTapped: ControlEvent<Void>
   }
   
-  public struct Output {
+  struct Output {
     let isPublicSelected: Driver<Bool>
     let isPrivateSelected: Driver<Bool>
     let passwordTitle: Driver<String>
@@ -31,7 +31,7 @@ public final class GroupPrivacySelectionViewModel: ViewModelable {
   private let validGroupPasswordUseCase: ValidGroupPasswordUseCase
   private weak var groupCreateCoordinator: GroupCreateCoordinator?
   
-  public init(
+  init(
     validGroupPasswordUseCase: ValidGroupPasswordUseCase,
     groupCreateCoordinator: GroupCreateCoordinator?
   ) {
@@ -39,7 +39,7 @@ public final class GroupPrivacySelectionViewModel: ViewModelable {
     self.groupCreateCoordinator = groupCreateCoordinator
   }
   
-  public func transform(to input: Input) -> Output {
+  func transform(to input: Input) -> Output {
     let isPublicSelected = Observable.merge(
       input.publicTapped.map { _ in true },
       input.privateTapped.map { _ in false }
