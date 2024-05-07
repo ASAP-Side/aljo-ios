@@ -122,6 +122,7 @@ extension ASStepper {
     
     [downButton, currentValueLabel, upButton].forEach {
       totalStackView.addArrangedSubview($0)
+      $0.setContentHuggingPriority(.required, for: .horizontal)
     }
   }
   
