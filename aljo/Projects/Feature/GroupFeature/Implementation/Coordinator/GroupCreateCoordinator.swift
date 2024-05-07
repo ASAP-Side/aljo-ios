@@ -9,7 +9,7 @@
 import UIKit
 
 import FlowKitInterface
-import GroupDomainImplementation
+import GroupDomainInterface
 
 import Swinject
 

@@ -8,9 +8,9 @@
 
 public struct GroupInformation {
   public let isPublic: Bool
-  public let password: String
+  public let password: String?
   
-  public init(isPublic: Bool, password: String) {
+  public init(isPublic: Bool, password: String?) {
     self.isPublic = isPublic
     self.password = password
   }
