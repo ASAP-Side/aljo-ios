@@ -32,6 +32,15 @@ public final class ASListView: UIView {
     set { scrollView.contentInset = newValue }
   }
   
+  public var contentOffset: CGPoint {
+    get { scrollView.contentOffset }
+    set { scrollView.contentOffset = newValue }
+  }
+  
+  public var contentOrigin: CGPoint {
+    itemStackView.frame.origin
+  }
+  
   public func addItem(_ item: UIView, title: String? = nil) {
     let headerBox = HeaderBox(contentView: item, title: title)
     itemStackView.addArrangedSubview(headerBox)

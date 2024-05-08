@@ -16,6 +16,7 @@ import SnapKit
 
 final class GroupProfileSettingViewController: UIViewController {
   private let disposeBag = DisposeBag()
+  private var cachedContentOffsetY: CGFloat?
   
   // MARK: Components
   private let listView: ASListView = {
@@ -176,9 +177,30 @@ final class GroupProfileSettingViewController: UIViewController {
     button.title = "다음"
     return button
   }()
+  private let nextButtonBackgroundView: UIView = {
+    let view = UIView()
+    return view
+  }()
+  private let bottomGradientLayer: CAGradientLayer = {
+    let gradientLayer = CAGradientLayer()
+    gradientLayer.colors = [
+      UIColor.white.withAlphaComponent(0.1).cgColor,
+      UIColor.white.cgColor
+    ]
+    gradientLayer.locations = [0.0, 0.2]
+    return gradientLayer
+  }()
   
   override func viewDidLoad() {
     configureUI()
+    bindKeyboard()
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    bottomGradientLayer.frame = nextButtonBackgroundView.bounds
+    bottomGradientLayer.frame.origin.x -= 7
   }
 }
 
@@ -187,17 +209,58 @@ extension GroupProfileSettingViewController {
   private func bindKeyboard() {
     NotificationCenter.default.rx
       .notification(UIResponder.keyboardWillShowNotification)
-      .subscribe(with: self, onNext: { object, _ in
+      .withUnretained(self)
+      .map { object, _ -> UIView in
+        return object.groupNameTextField.isFirstResponder ?
+        object.groupNameTextField : object.groupIntroduceTextView
+      }
+      .withUnretained(self)
+      .map { object, target -> CGFloat in
+        let targetMaxY = object.convertPointToMainView(
+          target
+        ).y + target.bounds.height
+        return targetMaxY
+      }
+      .subscribe(with: self, onNext: { object, targetMaxY in
+        object.cachedContentOffsetY = object.listView.contentOffset.y
         
+        if object.nextButton.frame.minY - targetMaxY < 20 {
+          let needMoveY = 40 - (object.nextButton.frame.minY - targetMaxY)
+          object.listView.contentOffset.y += needMoveY
+        }
+        
+        object.updateNextButtonLayout(bottomOffset: -20)
       })
       .disposed(by: disposeBag)
     
     NotificationCenter.default.rx
       .notification(UIResponder.keyboardWillHideNotification)
-      .subscribe(with: self, onNext: { object, _ in
-        
+      .withUnretained(self)
+      .compactMap { object, _ in
+        object.cachedContentOffsetY
+      }
+      .subscribe(with: self, onNext: { object, movedContentOffsetY in
+        object.listView.contentOffset.y = movedContentOffsetY
+        object.updateNextButtonLayout(
+          bottomOffset: -object.contentsViewKeyboardLayoutOffset()
+        )
       })
       .disposed(by: disposeBag)
+  }
+  
+  private func convertPointToMainView(_ target: UIView) -> CGPoint {
+    return target.convert(listView.contentOrigin, to: view)
+  }
+  
+  private func updateNextButtonLayout(bottomOffset: CGFloat) {
+    nextButton.snp.updateConstraints {
+      $0.bottom.equalTo(view.keyboardLayoutGuide.snp.top)
+        .offset(bottomOffset)
+    }
+    
+    UIView.animate(withDuration: 0.1) {
+      self.view.layoutIfNeeded()
+    }
   }
 }
 
@@ -206,13 +269,16 @@ extension GroupProfileSettingViewController {
   private func configureUI() {
     view.backgroundColor = .systemBackground
     listView.contentInset.top = 20
+    listView.contentInset.bottom = 20
+    nextButtonBackgroundView.layer.addSublayer(bottomGradientLayer)
     configureHirearchy()
     configureConstraints()
   }
   
   private func configureHirearchy() {
-    view.addSubview(listView)
-    view.addSubview(nextButton)
+    [listView, nextButtonBackgroundView, nextButton].forEach {
+      view.addSubview($0)
+    }
     
     [imageView, imageDetailLabel].forEach {
       imageStackView.addArrangedSubview($0)
@@ -256,7 +322,7 @@ extension GroupProfileSettingViewController {
     listView.snp.makeConstraints {
       $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
       $0.leading.trailing.equalToSuperview()
-      $0.bottom.equalToSuperview().offset(-view.frame.height * 0.12)
+      $0.bottom.equalToSuperview().offset(-view.frame.height * 0.09)
     }
     
     imageView.snp.makeConstraints {
@@ -293,6 +359,11 @@ extension GroupProfileSettingViewController {
       $0.bottom.equalTo(view.keyboardLayoutGuide.snp.top)
         .offset(-contentsViewKeyboardLayoutOffset())
       $0.height.equalTo(view.snp.height).multipliedBy(0.065)
+    }
+    
+    nextButtonBackgroundView.snp.makeConstraints {
+      $0.top.equalTo(nextButton.snp.top).offset(-20)
+      $0.horizontalEdges.bottom.equalToSuperview()
     }
   }
   
