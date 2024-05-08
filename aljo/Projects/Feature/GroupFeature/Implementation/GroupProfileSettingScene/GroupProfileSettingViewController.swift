@@ -165,7 +165,9 @@ final class GroupProfileSettingViewController: UIViewController {
   }()
   
   private let calendarView: ASCalendarView = {
-    let calendarView = ASCalendarView()
+    let calendarView = ASCalendarView(
+      by: Date()...Date().addingTimeInterval(60 * 24 * 60 * 60)
+    )
     return calendarView
   }()
   
@@ -180,23 +182,37 @@ final class GroupProfileSettingViewController: UIViewController {
   }
 }
 
+// MARK: Handling Keyboard Visibility
+extension GroupProfileSettingViewController {
+  private func bindKeyboard() {
+    NotificationCenter.default.rx
+      .notification(UIResponder.keyboardWillShowNotification)
+      .subscribe(with: self, onNext: { object, _ in
+        
+      })
+      .disposed(by: disposeBag)
+    
+    NotificationCenter.default.rx
+      .notification(UIResponder.keyboardWillHideNotification)
+      .subscribe(with: self, onNext: { object, _ in
+        
+      })
+      .disposed(by: disposeBag)
+  }
+}
+
 // MARK: - UI Configuration
 extension GroupProfileSettingViewController {
   private func configureUI() {
     view.backgroundColor = .systemBackground
-    listView.contentInset = UIEdgeInsets(
-      top: 20,
-      left: 0,
-      bottom: view.frame.height * 0.13,
-      right: 0
-    )
+    listView.contentInset.top = 20
     configureHirearchy()
     configureConstraints()
   }
   
   private func configureHirearchy() {
     view.addSubview(listView)
-    listView.addSubview(nextButton)
+    view.addSubview(nextButton)
     
     [imageView, imageDetailLabel].forEach {
       imageStackView.addArrangedSubview($0)
@@ -239,7 +255,8 @@ extension GroupProfileSettingViewController {
   private func configureConstraints() {
     listView.snp.makeConstraints {
       $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-      $0.leading.trailing.bottom.equalToSuperview()
+      $0.leading.trailing.equalToSuperview()
+      $0.bottom.equalToSuperview().offset(-view.frame.height * 0.12)
     }
     
     imageView.snp.makeConstraints {
@@ -273,8 +290,9 @@ extension GroupProfileSettingViewController {
     nextButton.snp.makeConstraints {
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
-      $0.bottom.equalTo(listView.keyboardLayoutGuide.snp.top)
+      $0.bottom.equalTo(view.keyboardLayoutGuide.snp.top)
         .offset(-contentsViewKeyboardLayoutOffset())
+      $0.height.equalTo(view.snp.height).multipliedBy(0.065)
     }
   }
   

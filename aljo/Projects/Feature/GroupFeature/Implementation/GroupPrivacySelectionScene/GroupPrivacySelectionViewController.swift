@@ -270,7 +270,7 @@ extension GroupPrivacySelectionViewController {
         .offset(-contentsViewKeyboardLayoutOffset())
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
-      $0.height.equalToSuperview().multipliedBy(0.065)
+      $0.height.equalTo(view.snp.height).multipliedBy(0.065)
     }
   }
   
