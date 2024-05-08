@@ -34,16 +34,16 @@ extension String {
     guard let scalar = UnicodeScalar(self)?.value else {
       return false
     }
-
+    
     return consonantScalarRange ~= scalar
   }
-
+  
   var isVowel: Bool {
     let consonantScalarRange: ClosedRange<UInt32> = 12623...12643
     guard let scalar = UnicodeScalar(self)?.value else {
       return false
     }
-
+    
     return consonantScalarRange ~= scalar
   }
 }
@@ -182,7 +182,7 @@ extension ASTextView: UITextViewDelegate {
     let changedText = currentText.replacingCharacters(in: range, with: text)
     
     if changedText.count <= maxLength { return true }
-
+    
     let lastCharacter = (currentText as String).last ?? Character("")
     let separatedCharacters = String(lastCharacter)
       .decomposedStringWithCanonicalMapping

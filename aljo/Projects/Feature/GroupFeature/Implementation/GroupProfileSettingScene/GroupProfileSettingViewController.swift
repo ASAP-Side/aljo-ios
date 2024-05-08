@@ -47,7 +47,8 @@ final class GroupProfileSettingViewController: UIViewController {
   
   private let groupNameTextField: ASBorderHighlightTextField = {
     let textField = ASBorderHighlightTextField()
-    textField.placeholder = "그룹명을 입력해주세요 (최대 15자 이내)"
+    textField.placeholder = "그룹명을 입력해주세요 (최대 30자 이내)"
+    textField.maxTextCount = 30
     return textField
   }()
   
