@@ -27,6 +27,11 @@ public final class ASListView: UIView {
     set { itemStackView.spacing = newValue }
   }
   
+  public var contentInset: UIEdgeInsets {
+    get { scrollView.contentInset }
+    set { scrollView.contentInset = newValue }
+  }
+  
   public func addItem(_ item: UIView, title: String? = nil) {
     let headerBox = HeaderBox(contentView: item, title: title)
     itemStackView.addArrangedSubview(headerBox)

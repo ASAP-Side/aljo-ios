@@ -183,6 +183,12 @@ final class GroupProfileSettingViewController: UIViewController {
 extension GroupProfileSettingViewController {
   private func configureUI() {
     view.backgroundColor = .systemBackground
+    listView.contentInset = UIEdgeInsets(
+      top: 20,
+      left: 0,
+      bottom: view.frame.height * 0.13,
+      right: 0
+    )
     configureHirearchy()
     configureConstraints()
   }
