@@ -71,6 +71,7 @@ extension ASListView: UIScrollViewDelegate {
 extension ASListView {
   private func configureAction() {
     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapScrollView))
+    tapGesture.cancelsTouchesInView = false
     scrollView.addGestureRecognizer(tapGesture)
   }
   

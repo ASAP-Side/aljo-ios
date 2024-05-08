@@ -42,13 +42,12 @@ public final class ProgressNavigationViewController: UINavigationController {
   }
 }
 
-extension ProgressNavigationViewController: UINavigationControllerDelegate {
+extension ProgressNavigationViewController: UINavigationControllerDelegate {  
   public func navigationController(
     _ navigationController: UINavigationController,
-    willShow viewController: UIViewController,
+    didShow viewController: UIViewController,
     animated: Bool
   ) {
-    
     guard let stepCount = stepCount else {
       return
     }
