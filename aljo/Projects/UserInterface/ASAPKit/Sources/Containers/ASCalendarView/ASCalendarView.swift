@@ -49,6 +49,7 @@ public final class ASCalendarView: UIView {
       CalendarCollectionViewCell.self,
       forCellWithReuseIdentifier: CalendarCollectionViewCell.identifier
     )
+    collectionView.isScrollEnabled = false
     return collectionView
   }()
   
