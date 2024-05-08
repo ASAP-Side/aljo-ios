@@ -273,7 +273,16 @@ extension GroupProfileSettingViewController {
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
       $0.bottom.equalTo(listView.keyboardLayoutGuide.snp.top)
-        .offset(-20)
+        .offset(-contentsViewKeyboardLayoutOffset())
     }
+  }
+  
+  private func contentsViewKeyboardLayoutOffset() -> CGFloat {
+    let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+    if scene?.windows.first?.safeAreaInsets.bottom != 0 {
+      return 0
+    }
+    
+    return 20
   }
 }
