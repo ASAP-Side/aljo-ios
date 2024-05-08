@@ -26,6 +26,11 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
   }()
   
   private var isSelectable: Bool = false
+  private var isSunday: Bool = false
+  
+  private var selectableColor: UIColor {
+    return self.isSunday ? .red500 : .black01
+  }
   
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -66,9 +71,10 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
   
   func configureDay(to date: CalendarDate) {
     if date.isEmpty { return }
+    isSunday = date.isSunday
     
     dayLabel.text = "\(date.day)"
-    dayLabel.textColor = (date.isSelectable == false) ? .black04 : .black01
+    dayLabel.textColor = (date.isSelectable == false) ? .black04 : selectableColor
     isSelectable = date.isSelectable
   }
   
@@ -80,11 +86,13 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
     if isSelected == true {
       dayLabel.font = .pretendard(.headLine6)
       dayLabel.textColor = .white
+      return
     }
     
     if isSelected == false {
       dayLabel.font = .pretendard(.body3)
-      dayLabel.textColor = .black01
+      dayLabel.textColor = selectableColor
+      return
     }
   }
 }

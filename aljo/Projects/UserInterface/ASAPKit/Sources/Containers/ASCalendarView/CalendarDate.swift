@@ -31,21 +31,32 @@ struct CalendarDate: Equatable {
   let year: Int
   let month: Int
   let day: Int
-  
+
   var isEmpty: Bool = false
   var isSelectable: Bool = true
+  var isSunday: Bool = false
   
   static func generate(year: Int, month: Int, day: Int, with range: ClosedRange<Date>?) -> Self {
     var isSelectable = true
+    var isSunday = false
     
     let dateComponent = DateComponents(year: year, month: month, day: day)
     let date = Calendar.koreanCalendar.date(from: dateComponent)
     
     if let selectableRange = range, let date = date {
       isSelectable = selectableRange.contains(date)
+      let weekday = Calendar.koreanCalendar.component(.weekday, from: date)
+      
+      isSunday = weekday == 1 ? true : false
     }
     
-    return CalendarDate(year: year, month: month, day: day, isSelectable: isSelectable)
+    return CalendarDate(
+      year: year,
+      month: month,
+      day: day,
+      isSelectable: isSelectable,
+      isSunday: isSunday
+    )
   }
   
   static func generateEmpty() -> Self {

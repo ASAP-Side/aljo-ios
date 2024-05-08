@@ -100,8 +100,6 @@ private extension ASCalendarView {
   
   /// 기준 달에 맞는 일 데이터를 만듭니다.
   private func updateDays(year: Int, month: Int) {
-    days.removeAll()
-    
     let startOfTheWeek = startDayOfTheWeekDay()
     let totalDays = startOfTheWeek + endDate()
     
@@ -254,11 +252,11 @@ private extension ASCalendarView {
   
   func configureWeekLabels() -> [UILabel] {
     let dayOfWeek = calendar.shortWeekdaySymbols
-    
+
     return dayOfWeek.map {
       let label = UILabel()
       label.font = .pretendard(.body3)
-      label.textColor = .black03
+      label.textColor = $0 == "일" ? .red500 : .black03
       label.text = $0
       label.textAlignment = .center
       return label
