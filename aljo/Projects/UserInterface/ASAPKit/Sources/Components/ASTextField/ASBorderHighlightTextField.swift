@@ -48,12 +48,14 @@ public final class ASBorderHighlightTextField: UITextField {
 
 // MARK: UITextField Delegate
 extension ASBorderHighlightTextField: UITextFieldDelegate {
-  public func textFieldDidEndEditing(_ textField: UITextField) {
-    layer.borderColor = UIColor.gray02.cgColor
-  }
-  
   public func textFieldDidBeginEditing(_ textField: UITextField) {
     layer.borderColor = UIColor.black01.cgColor
+    layer.borderWidth = 1.5
+  }
+  
+  public func textFieldDidEndEditing(_ textField: UITextField) {
+    layer.borderColor = UIColor.gray02.cgColor
+    layer.borderWidth = 1
   }
   
   public func textField(
@@ -105,7 +107,8 @@ extension ASBorderHighlightTextField {
   private func configureUI() {
     font = .pretendard(.body3)
     textColor = .black01
-    layer.borderWidth = 1.5
+    tintColor = .red01
+    layer.borderWidth = 1
     layer.borderColor = UIColor.gray02.cgColor
     layer.cornerRadius = 6
   }

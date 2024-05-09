@@ -54,8 +54,8 @@ final class GroupProfileSettingViewController: UIViewController {
   }()
   
   private let groupIntroduceTextView: ASTextView = {
-    let textView = ASTextView(placeholder: "내용을 입력해주세요", maxLength: 50)
-    textView.borderColor = .black04
+    let textView = ASTextView(maxLength: 50)
+    textView.placeholder = "내용을 입력해주세요"
     textView.isShowCount = true
     return textView
   }()
@@ -175,6 +175,7 @@ final class GroupProfileSettingViewController: UIViewController {
   private let nextButton: ASRectButton = {
     let button = ASRectButton(style: .fill)
     button.title = "다음"
+    button.isEnabled = false
     return button
   }()
   private let nextButtonBackgroundView: UIView = {
