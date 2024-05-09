@@ -10,11 +10,10 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
   // TODO: - REUSABLE 프로토콜 만들어서 채택하기
   static let identifier: String = "CalendarCollectionViewCell"
   
-  private let selectLayer: CAShapeLayer = {
-    let layer = CAShapeLayer()
-    layer.backgroundColor = UIColor.red01.cgColor
-    layer.isHidden = true
-    return layer
+  private let selectBackgrounView: UIView = {
+    let view = UIView()
+    view.backgroundColor = UIColor.clear
+    return view
   }()
   
   private let dayLabel: UILabel = {
@@ -44,7 +43,7 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
   }
   
   override func prepareForReuse() {
-    selectLayer.isHidden = true
+    selectBackgrounView.backgroundColor = UIColor.clear
     dayLabel.font = .pretendard(.body3)
     dayLabel.textColor = .black01
     dayLabel.text = nil
@@ -53,19 +52,19 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
   
   override func layoutSubviews() {
     super.layoutSubviews()
-    
-    selectLayer.frame = bounds.insetBy(dx: 10, dy: 10)
-    let minLength = min(selectLayer.frame.width, selectLayer.frame.height)
-    selectLayer.cornerRadius = minLength / 2
-    
-    layer.insertSublayer(selectLayer, at: 0)
+    selectBackgrounView.layer.cornerRadius = selectBackgrounView.frame.width / 2
   }
   
   private func configure() {
+    contentView.addSubview(selectBackgrounView)
     contentView.addSubview(dayLabel)
     
     dayLabel.snp.makeConstraints {
       $0.edges.equalToSuperview()
+    }
+    
+    selectBackgrounView.snp.makeConstraints {
+      $0.edges.equalToSuperview().inset(8)
     }
   }
   
@@ -81,17 +80,17 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
   func updateSelect(to isSelected: Bool) {
     if isSelectable == false { return }
     
-    selectLayer.isHidden = (isSelected == false)
-    
     if isSelected == true {
       dayLabel.font = .pretendard(.headLine6)
       dayLabel.textColor = .white
+      selectBackgrounView.backgroundColor = UIColor.red01
       return
     }
     
     if isSelected == false {
       dayLabel.font = .pretendard(.body3)
       dayLabel.textColor = selectableColor
+      selectBackgrounView.backgroundColor = UIColor.clear
       return
     }
   }
