@@ -218,60 +218,49 @@ final class GroupProfileSettingViewController: UIViewController {
   }
   
   private func bind() {
-    let weekdayTap = Observable.merge(
-      mondayButton.rx.tap.map { _ in Weekday.monday },
-      tuesdayButton.rx.tap.map { _ in Weekday.tuesday },
-      wednesdayButton.rx.tap.map { _ in Weekday.wednesday },
-      thursdayButton.rx.tap.map { _ in Weekday.thursday },
-      fridayButton.rx.tap.map { _ in Weekday.friday },
-      saturdayButton.rx.tap.map { _ in Weekday.saturday },
-      sundayButton.rx.tap.map { _ in Weekday.sunday }
-    )
-    
     let input = GroupProfileSettingViewModel.Input(
-      weekdayTap: weekdayTap
+      mondayTapped: mondayButton.rx.tap,
+      tuesdayTapped: tuesdayButton.rx.tap,
+      wednesdayTapped: wednesdayButton.rx.tap,
+      thursdayTapped: thursdayButton.rx.tap,
+      fridayTapped: fridayButton.rx.tap,
+      saturdayTapped: saturdayButton.rx.tap,
+      sundayTapped: sundayButton.rx.tap
     )
     
     let output = viewModel.transform(to: input)
     
-    output.selectedWeekdays
-      .compactMap { $0[.monday] }
+    output.isMondaySelected
       .distinctUntilChanged()
       .drive(mondayButton.rx.isSelected)
       .disposed(by: disposeBag)
     
-    output.selectedWeekdays
-      .compactMap { $0[.tuesday] }
+    output.isTuesdaySelected
       .distinctUntilChanged()
       .drive(tuesdayButton.rx.isSelected)
       .disposed(by: disposeBag)
     
-    output.selectedWeekdays
-      .compactMap { $0[.wednesday] }
+    output.isWednesdaySelected
       .distinctUntilChanged()
       .drive(wednesdayButton.rx.isSelected)
       .disposed(by: disposeBag)
     
-    output.selectedWeekdays
-      .compactMap { $0[.thursday] }
+    output.isThursdaySelected
       .distinctUntilChanged()
       .drive(thursdayButton.rx.isSelected)
       .disposed(by: disposeBag)
     
-    output.selectedWeekdays
-      .compactMap { $0[.friday] }
+    output.isFridaySelected
       .distinctUntilChanged()
       .drive(fridayButton.rx.isSelected)
       .disposed(by: disposeBag)
     
-    output.selectedWeekdays
-      .compactMap { $0[.saturday] }
+    output.isSaturdaySelected
       .distinctUntilChanged()
       .drive(saturdayButton.rx.isSelected)
       .disposed(by: disposeBag)
     
-    output.selectedWeekdays
-      .compactMap { $0[.sunday] }
+    output.isSundaySelected
       .distinctUntilChanged()
       .drive(sundayButton.rx.isSelected)
       .disposed(by: disposeBag)
