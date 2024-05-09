@@ -16,6 +16,8 @@ import SnapKit
 
 final class GroupProfileSettingViewController: UIViewController {
   private let disposeBag = DisposeBag()
+  private let viewModel: GroupProfileSettingViewModel
+  
   private var cachedContentOffsetY: CGFloat?
   
   // MARK: Components
@@ -192,8 +194,19 @@ final class GroupProfileSettingViewController: UIViewController {
     return gradientLayer
   }()
   
+  init(viewModel: GroupProfileSettingViewModel) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  @available(*, unavailable, message: "스토리 보드로 생성할 수 없습니다.")
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   override func viewDidLoad() {
     configureUI()
+    bind()
     bindKeyboard()
   }
   
@@ -202,6 +215,66 @@ final class GroupProfileSettingViewController: UIViewController {
     
     bottomGradientLayer.frame = nextButtonBackgroundView.bounds
     bottomGradientLayer.frame.origin.x -= 7
+  }
+  
+  private func bind() {
+    let weekdayTap = Observable.merge(
+      mondayButton.rx.tap.map { _ in Weekday.monday },
+      tuesdayButton.rx.tap.map { _ in Weekday.tuesday },
+      wednesdayButton.rx.tap.map { _ in Weekday.wednesday },
+      thursdayButton.rx.tap.map { _ in Weekday.thursday },
+      fridayButton.rx.tap.map { _ in Weekday.friday },
+      saturdayButton.rx.tap.map { _ in Weekday.saturday },
+      sundayButton.rx.tap.map { _ in Weekday.sunday }
+    )
+    
+    let input = GroupProfileSettingViewModel.Input(
+      weekdayTap: weekdayTap
+    )
+    
+    let output = viewModel.transform(to: input)
+    
+    output.selectedWeekdays
+      .compactMap { $0[.monday] }
+      .distinctUntilChanged()
+      .drive(mondayButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.selectedWeekdays
+      .compactMap { $0[.tuesday] }
+      .distinctUntilChanged()
+      .drive(tuesdayButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.selectedWeekdays
+      .compactMap { $0[.wednesday] }
+      .distinctUntilChanged()
+      .drive(wednesdayButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.selectedWeekdays
+      .compactMap { $0[.thursday] }
+      .distinctUntilChanged()
+      .drive(thursdayButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.selectedWeekdays
+      .compactMap { $0[.friday] }
+      .distinctUntilChanged()
+      .drive(fridayButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.selectedWeekdays
+      .compactMap { $0[.saturday] }
+      .distinctUntilChanged()
+      .drive(saturdayButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.selectedWeekdays
+      .compactMap { $0[.sunday] }
+      .distinctUntilChanged()
+      .drive(sundayButton.rx.isSelected)
+      .disposed(by: disposeBag)
   }
 }
 
