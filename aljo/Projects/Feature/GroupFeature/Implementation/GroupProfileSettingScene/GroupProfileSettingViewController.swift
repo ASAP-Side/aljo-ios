@@ -148,7 +148,7 @@ final class GroupProfileSettingViewController: UIViewController {
     return stackView
   }()
   
-  private let timeTextField: UITextField = {
+  private let alarmTimeTextField: UITextField = {
     let textField = UITextField()
     textField.placeholder = "시간을 선택해주세요"
     textField.font = .pretendard(.body3)
@@ -163,7 +163,7 @@ final class GroupProfileSettingViewController: UIViewController {
     )
     return imageView
   }()
-  private let timePickerStackView: UIStackView = {
+  private let alarmTimePickerStackView: UIStackView = {
     let stackView = UIStackView()
     stackView.axis = .horizontal
     stackView.alignment = .center
@@ -227,6 +227,8 @@ final class GroupProfileSettingViewController: UIViewController {
   }
   
   private func bind() {
+    let timePickerTapGesture = UITapGestureRecognizer()
+    alarmTimePickerStackView.addGestureRecognizer(timePickerTapGesture)
     let input = GroupProfileSettingViewModel.Input(
       imageSelectTapped: imageSelectButton.rx.tap,
       groupName: groupNameTextField.rx.text.orEmpty,
@@ -239,6 +241,7 @@ final class GroupProfileSettingViewController: UIViewController {
       fridayTapped: fridayButton.rx.tap,
       saturdayTapped: saturdayButton.rx.tap,
       sundayTapped: sundayButton.rx.tap,
+      alarmTimePickTapped: timePickerTapGesture.rx.event.map { _ in },
       endDate: calendarView.rx.selectedDate
     )
     
@@ -246,10 +249,6 @@ final class GroupProfileSettingViewController: UIViewController {
     
     output.selectedImage
       .drive(groupImageView.rx.image)
-      .disposed(by: disposeBag)
-    
-    output.toImagePicker
-      .drive()
       .disposed(by: disposeBag)
     
     output.isMondaySelected
@@ -285,6 +284,18 @@ final class GroupProfileSettingViewController: UIViewController {
     output.isSundaySelected
       .distinctUntilChanged()
       .drive(sundayButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.selectedDate
+      .drive(alarmTimeTextField.rx.text)
+      .disposed(by: disposeBag)
+    
+    output.toImagePicker
+      .drive()
+      .disposed(by: disposeBag)
+    
+    output.toTimePicker
+      .drive()
       .disposed(by: disposeBag)
   }
 }
@@ -389,11 +400,11 @@ extension GroupProfileSettingViewController {
       dayOfWeekStackView.addArrangedSubview($0)
     }
     
-    [timeTextField, downImage].forEach {
-      timePickerStackView.addArrangedSubview($0)
+    [alarmTimeTextField, downImage].forEach {
+      alarmTimePickerStackView.addArrangedSubview($0)
     }
     downImage.setContentHuggingPriority(.required, for: .horizontal)
-    timeTextField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+    alarmTimeTextField.setContentHuggingPriority(.defaultLow, for: .horizontal)
     
     listView.addItem(imageStackView, title: "대표이미지")
     listView.addItem(groupNameTextField, title: "그룹명")
@@ -401,7 +412,7 @@ extension GroupProfileSettingViewController {
     listView.addItem(groupCountStackView, title: "그룹 인원")
     listView.addSeperator()
     listView.addItem(dayOfWeekStackView, title: "알람 요일")
-    listView.addItem(timePickerStackView, title: "알람 시간")
+    listView.addItem(alarmTimePickerStackView, title: "알람 시간")
     listView.addItem(calendarView, title: "알람 종료 날짜")
   }
   
@@ -437,7 +448,7 @@ extension GroupProfileSettingViewController {
       $0.height.equalTo(mondayButton.snp.width)
     }
     
-    timePickerStackView.snp.makeConstraints {
+    alarmTimePickerStackView.snp.makeConstraints {
       $0.height.equalTo(view.snp.height).multipliedBy(0.06)
     }
     

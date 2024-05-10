@@ -1,5 +1,5 @@
 //
-//  TimeSelectBottomSheetController.swift
+//  TimePickerBottomSheetController.swift
 //  GroupFeatureImplementation
 //
 //  Created by 이태영 on 5/10/24.
@@ -10,7 +10,14 @@ import UIKit
 
 import ASAPKit
 
-final class TimeSelectBottomSheetController: ASBottomSheetController {
+public protocol TimePickerBottomSheetDelegate: AnyObject {
+  func timePickerBottomSheet(
+    _ controller: TimePickerBottomSheetController,
+    didComplete date: Date?
+  )
+}
+
+public final class TimePickerBottomSheetController: ASBottomSheetController {
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.text = "시간 선택"
@@ -25,29 +32,47 @@ final class TimeSelectBottomSheetController: ASBottomSheetController {
     return button
   }()
   
-  private let datePicker: AlarmTimePicker = {
-    let datePicker = AlarmTimePicker()
-    return datePicker
-  }()
+  private let timePicker: AlarmTimePicker
   
-  private let bottomButton: UIButton = {
+  private let confirmButton: UIButton = {
     let button = ASRectButton(style: .fill)
     button.title = "확인"
     return button
   }()
   
+  public weak var delegate: TimePickerBottomSheetDelegate?
+  
   init(detents: ASBottomSheetDetent, date: Date) {
+    self.timePicker = AlarmTimePicker(startDate: date)
     super.init(detent: detents)
   }
   
-  override func viewDidLoad() {
+  override public func viewDidLoad() {
+    configreAction()
     configureUI()
+  }
+  
+  private func configreAction() {
+    let confirmAction = UIAction { [weak self] _ in
+      guard let self = self else {
+        return
+      }
+      self.delegate?.timePickerBottomSheet(self, didComplete: self.timePicker.selectedDate)
+      self.dismiss(animated: true)
+    }
+    
+    let closeAction = UIAction { [weak self] _ in
+      self?.dismiss(animated: true)
+    }
+    
+    confirmButton.addAction(confirmAction, for: .touchUpInside)
+    closeButton.addAction(closeAction, for: .touchUpInside)
   }
   
   private func configureUI() {
     view.backgroundColor = .systemBackground
     view.layer.cornerRadius = 20
-    [titleLabel, closeButton, datePicker, bottomButton].forEach {
+    [titleLabel, closeButton, timePicker, confirmButton].forEach {
       view.addSubview($0)
     }
     
@@ -61,7 +86,7 @@ final class TimeSelectBottomSheetController: ASBottomSheetController {
       $0.trailing.equalToSuperview().offset(-20)
     }
     
-    datePicker.snp.makeConstraints {
+    timePicker.snp.makeConstraints {
       $0.centerX.equalToSuperview()
       $0.top.equalTo(titleLabel.snp.bottom).offset(24)
       $0.leading.equalToSuperview().offset(20)
@@ -69,11 +94,11 @@ final class TimeSelectBottomSheetController: ASBottomSheetController {
       $0.height.equalToSuperview().multipliedBy(0.3)
     }
     
-    bottomButton.snp.makeConstraints {
+    confirmButton.snp.makeConstraints {
       $0.centerX.equalToSuperview()
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
-      $0.top.equalTo(datePicker.snp.bottom).offset(16)
+      $0.top.equalTo(timePicker.snp.bottom).offset(16)
       $0.height.equalTo(52)
     }
   }

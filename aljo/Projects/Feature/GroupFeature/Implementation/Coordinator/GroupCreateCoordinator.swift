@@ -16,6 +16,7 @@ import GroupDomainImplementation
 public protocol GroupCreateCoordinator: Coordinator {
   func navigateGroupProfileSetting(with builder: GroupInformationBuilder)
   func presentImagePicker(delegate: ASImagePickerDelegate)
+  func presentTimeSelect(delegate: TimePickerBottomSheetDelegate, date: Date?)
 }
 
 public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
@@ -52,5 +53,14 @@ public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
     viewController.delegate = delegate
     navigationBarController.modalPresentationStyle = .overFullScreen
     navigationController.present(navigationBarController, animated: true)
+  }
+  
+  public func presentTimeSelect(delegate: TimePickerBottomSheetDelegate, date: Date?) {
+    let viewController = TimePickerBottomSheetController(
+      detents: .custom(0.4625),
+      date: date ?? Date()
+    )
+    viewController.delegate = delegate
+    navigationController.present(viewController, animated: true)
   }
 }

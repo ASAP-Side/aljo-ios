@@ -10,6 +10,8 @@ import UIKit
 
 import ASAPKit
 
+import SnapKit
+
 final class AlarmTimePicker: UIView {
   enum Constant {
     static let timePeriod = 0
@@ -38,11 +40,18 @@ final class AlarmTimePicker: UIView {
   var selectedHour: Int = 1
   var selectedMinute: Int = 0
   
+  var selectedDate: Date? {
+    get {
+      generateSelectedDate()
+    }
+  }
+  
   init(startDate: Date = Date()) {
     super.init(frame: .zero)
     setupPickerView(startDate: startDate)
   }
   
+  @available(*, unavailable, message: "스토리 보드로 생성할 수 없습니다.")
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
@@ -71,31 +80,24 @@ final class AlarmTimePicker: UIView {
     pickerView.dataSource = self
     pickerView.delegate = self
     
-    addSubview(pickerView)
-    pickerView.translatesAutoresizingMaskIntoConstraints = false
-    
-    NSLayoutConstraint.activate([
-      pickerView.leadingAnchor.constraint(equalTo: leadingAnchor),
-      pickerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-      pickerView.topAnchor.constraint(equalTo: topAnchor),
-      pickerView.bottomAnchor.constraint(equalTo: bottomAnchor)
-    ])
-    
+    configureUI()
     setInitialValues(startDate: startDate)
   }
   
   private func setInitialValues(startDate: Date) {
     let calendar = Calendar.current
-    let hour = (calendar.component(.hour, from: startDate) + 11) % 12 + 1
+    let hour = calendar.component(.hour, from: startDate)
     let minute = calendar.component(.minute, from: startDate)
-    let timePeriod = hour >= 12 ? "오후" : "오전"
-    
-    selectedtimePeriod = timePeriod
-    selectedHour = hour
-    selectedMinute = minute
+    selectedHour = (hour + 11) % 12 + 1
+    selectedMinute = Int(minuteOptions[minute / 5]) ?? 0
+    if hour == 0 {
+      selectedtimePeriod = "오전"
+    } else {
+      selectedtimePeriod = selectedHour >= 12 ? "오후" : "오전"
+    }
     
     pickerView.selectRow(
-      timePeriodOptions.firstIndex(of: timePeriod) ?? 0,
+      timePeriodOptions.firstIndex(of: selectedtimePeriod) ?? 0,
       inComponent: Constant.timePeriod,
       animated: false
     )
@@ -109,6 +111,22 @@ final class AlarmTimePicker: UIView {
       inComponent: Constant.minute,
       animated: false
     )
+  }
+  
+  private func configureUI() {
+    addSubview(pickerView)
+    
+    pickerView.snp.makeConstraints {
+      $0.edges.equalToSuperview()
+    }
+  }
+  
+  private func generateSelectedDate() -> Date? {
+    var dateComponents = DateComponents()
+    let timePeriodHour = selectedtimePeriod == "오전" ? 0 : 12
+    dateComponents.hour = timePeriodHour + (selectedHour == 12 ? 0 : selectedHour)
+    dateComponents.minute = selectedMinute
+    return Calendar.current.date(from: dateComponents)
   }
 }
 

@@ -27,12 +27,12 @@ final class GroupProfileSettingViewModel: ViewModelable {
     let fridayTapped: ControlEvent<Void>
     let saturdayTapped: ControlEvent<Void>
     let sundayTapped: ControlEvent<Void>
+    let alarmTimePickTapped: Observable<Void>
     let endDate: Observable<Date?>
   }
   
   struct Output {
     let selectedImage: Driver<UIImage?>
-    let toImagePicker: Driver<Void>
     let isMondaySelected: Driver<Bool>
     let isTuesdaySelected: Driver<Bool>
     let isWednesdaySelected: Driver<Bool>
@@ -40,6 +40,9 @@ final class GroupProfileSettingViewModel: ViewModelable {
     let isFridaySelected: Driver<Bool>
     let isSaturdaySelected: Driver<Bool>
     let isSundaySelected: Driver<Bool>
+    let toImagePicker: Driver<Void>
+    let toTimePicker: Driver<Void>
+    let selectedDate: Driver<String>
   }
   private let weekdaysSelectHistories: [Weekday: Bool] = Weekday.allCases
     .reduce(into: [:]) { initialValue, weekday in
@@ -47,6 +50,14 @@ final class GroupProfileSettingViewModel: ViewModelable {
     }
   private weak var coordinator: GroupCreateCoordinator?
   private let selectedImageRelay = PublishRelay<[UIImage?]>()
+  private let selectedDateRelay = BehaviorRelay<Date?>(value: nil)
+  private let dateFormatter: DateFormatter = {
+    // TODO: DateFormatter Extension으로 분리
+    let dateFormatter = DateFormatter()
+    dateFormatter.locale = Locale(identifier: "ko_KR")
+    dateFormatter.dateFormat = "a h:mm"
+    return dateFormatter
+  }()
   
   init(coordinator: GroupCreateCoordinator?) {
     self.coordinator = coordinator
@@ -75,17 +86,32 @@ final class GroupProfileSettingViewModel: ViewModelable {
       })
       .asDriver(onErrorJustReturn: ())
     
+    let toTimePicker = input.alarmTimePickTapped
+      .do(onNext: {
+        self.coordinator?.presentTimeSelect(
+          delegate: self,
+          date: self.selectedDateRelay.value
+        )
+      })
+      .asDriver(onErrorJustReturn: ())
+    
+    let selectedDate = selectedDateRelay.compactMap { $0 }
+      .map { self.dateFormatter.string(from: $0) }
+      .asDriver(onErrorJustReturn: "")
+    
     return Output(
       selectedImage: selectedImageRelay.compactMap { $0.first }
         .asDriver(onErrorJustReturn: UIImage()),
-      toImagePicker: toImagePicker,
       isMondaySelected: selectedWeekdays.compactMap { $0[.monday] },
       isTuesdaySelected: selectedWeekdays.compactMap { $0[.tuesday] },
       isWednesdaySelected: selectedWeekdays.compactMap { $0[.wednesday] },
       isThursdaySelected: selectedWeekdays.compactMap { $0[.thursday] },
       isFridaySelected: selectedWeekdays.compactMap { $0[.friday] },
       isSaturdaySelected: selectedWeekdays.compactMap { $0[.saturday] },
-      isSundaySelected: selectedWeekdays.compactMap { $0[.sunday] }
+      isSundaySelected: selectedWeekdays.compactMap { $0[.sunday] },
+      toImagePicker: toImagePicker,
+      toTimePicker: toTimePicker,
+      selectedDate: selectedDate
     )
   }
 }
@@ -96,6 +122,15 @@ extension GroupProfileSettingViewModel: ASImagePickerDelegate {
     didComplete images: [UIImage?]
   ) {
     selectedImageRelay.accept(images)
+  }
+}
+
+extension GroupProfileSettingViewModel: TimePickerBottomSheetDelegate {
+  func timePickerBottomSheet(
+    _ controller: TimePickerBottomSheetController,
+    didComplete date: Date?
+  ) {
+    selectedDateRelay.accept(date)
   }
 }
 
