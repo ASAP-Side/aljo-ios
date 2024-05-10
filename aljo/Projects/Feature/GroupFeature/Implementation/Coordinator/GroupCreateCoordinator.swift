@@ -8,12 +8,14 @@
 
 import UIKit
 
+import ASAPKit
 import FlowKitInterface
 import GroupDomainInterface
 import GroupDomainImplementation
 
 public protocol GroupCreateCoordinator: Coordinator {
   func navigateGroupProfileSetting(with builder: GroupInformationBuilder)
+  func presentImagePicker(delegate: ASImagePickerDelegate)
 }
 
 public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
@@ -38,8 +40,17 @@ public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
   }
   
   public func navigateGroupProfileSetting(with builder: GroupInformationBuilder) {
-    let viewModel = GroupProfileSettingViewModel()
+    let viewModel = GroupProfileSettingViewModel(coordinator: self)
     let viewController = GroupProfileSettingViewController(viewModel: viewModel)
     navigationController.pushViewController(viewController, animated: true)
+  }
+  
+  public func presentImagePicker(delegate: ASImagePickerDelegate) {
+    let navigationBarController = UINavigationController()
+    let viewController = ASImagePickerViewController(max: 1)
+    navigationBarController.setViewControllers([viewController], animated: false)
+    viewController.delegate = delegate
+    navigationBarController.modalPresentationStyle = .overFullScreen
+    navigationController.present(navigationBarController, animated: true)
   }
 }

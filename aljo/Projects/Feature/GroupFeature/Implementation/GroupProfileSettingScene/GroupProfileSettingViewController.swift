@@ -27,10 +27,19 @@ final class GroupProfileSettingViewController: UIViewController {
     return listView
   }()
   
-  private let imageView: UIImageView = {
+  private let groupImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.backgroundColor = .gray04
+    imageView.layer.cornerRadius = 6
+    imageView.layer.borderWidth = 1
+    imageView.layer.borderColor = UIColor.gray02.cgColor
+    imageView.image = .AJImage.group_random1
     return imageView
+  }()
+  private let imageSelectButton: UIButton = {
+    let button = UIButton()
+    button.setImage(.AJImage.group_select_circle, for: .normal)
+    return button
   }()
   private let imageDetailLabel: UILabel = {
     let label = UILabel()
@@ -219,6 +228,7 @@ final class GroupProfileSettingViewController: UIViewController {
   
   private func bind() {
     let input = GroupProfileSettingViewModel.Input(
+      imageSelectTapped: imageSelectButton.rx.tap,
       groupName: groupNameTextField.rx.text.orEmpty,
       groupIntroduce: groupIntroduceTextView.rx.text.orEmpty,
       headCount: groupCountStepper.rx.value,
@@ -233,6 +243,14 @@ final class GroupProfileSettingViewController: UIViewController {
     )
     
     let output = viewModel.transform(to: input)
+    
+    output.selectedImage
+      .drive(groupImageView.rx.image)
+      .disposed(by: disposeBag)
+    
+    output.toImagePicker
+      .drive()
+      .disposed(by: disposeBag)
     
     output.isMondaySelected
       .distinctUntilChanged()
@@ -347,9 +365,11 @@ extension GroupProfileSettingViewController {
       view.addSubview($0)
     }
     
-    [imageView, imageDetailLabel].forEach {
+    [groupImageView, imageDetailLabel].forEach {
       imageStackView.addArrangedSubview($0)
     }
+    
+    listView.addSubview(imageSelectButton)
     
     [groupMaxCountLabel, groupCountStepper].forEach {
       groupCountStackView.addArrangedSubview($0)
@@ -392,8 +412,13 @@ extension GroupProfileSettingViewController {
       $0.bottom.equalToSuperview().offset(-view.frame.height * 0.09)
     }
     
-    imageView.snp.makeConstraints {
+    groupImageView.snp.makeConstraints {
       $0.height.equalTo(view.snp.height).multipliedBy(0.29)
+    }
+    
+    imageSelectButton.snp.makeConstraints {
+      $0.trailing.equalTo(groupImageView.snp.trailing).inset(14)
+      $0.bottom.equalTo(groupImageView.snp.bottom).inset(14)
     }
     
     groupNameTextField.snp.makeConstraints {

@@ -25,7 +25,14 @@ let project = Project.app(
       dependencies: [
         .feature(target: .GroupFeature, type: .implementation),
         .domain(target: .GroupDomain, type: .implementation)
-      ]
+      ],
+      infoPlist: .extendingDefault(
+        with: [
+          "UIMainStoryboardFile": "",
+          "UILaunchStoryboardName": "LaunchScreen",
+          "NSPhotoLibraryUsageDescription": "사진에 접근할 수 있는 권한이 필요합니다."
+        ]
+      )
     )
   ]
 )

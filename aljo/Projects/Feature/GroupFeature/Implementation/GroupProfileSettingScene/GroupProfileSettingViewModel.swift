@@ -6,8 +6,9 @@
 //  Copyright © 2024 com.asap. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
+import ASAPKit
 import BaseFeatureInterface
 
 import RxCocoa
@@ -15,6 +16,7 @@ import RxSwift
 
 final class GroupProfileSettingViewModel: ViewModelable {
   struct Input {
+    let imageSelectTapped: ControlEvent<Void>
     let groupName: ControlProperty<String>
     let groupIntroduce: ControlProperty<String>
     let headCount: ControlProperty<Int>
@@ -29,6 +31,8 @@ final class GroupProfileSettingViewModel: ViewModelable {
   }
   
   struct Output {
+    let selectedImage: Driver<UIImage?>
+    let toImagePicker: Driver<Void>
     let isMondaySelected: Driver<Bool>
     let isTuesdaySelected: Driver<Bool>
     let isWednesdaySelected: Driver<Bool>
@@ -41,6 +45,12 @@ final class GroupProfileSettingViewModel: ViewModelable {
     .reduce(into: [:]) { initialValue, weekday in
       initialValue[weekday] = false
     }
+  private weak var coordinator: GroupCreateCoordinator?
+  private let selectedImageRelay = PublishRelay<[UIImage?]>()
+  
+  init(coordinator: GroupCreateCoordinator?) {
+    self.coordinator = coordinator
+  }
   
   func transform(to input: Input) -> Output {
     let selectedWeekdays = Observable.merge(
@@ -59,7 +69,16 @@ final class GroupProfileSettingViewModel: ViewModelable {
       }
       .asDriver(onErrorJustReturn: weekdaysSelectHistories)
     
+    let toImagePicker = input.imageSelectTapped
+      .do(onNext: {
+        self.coordinator?.presentImagePicker(delegate: self)
+      })
+      .asDriver(onErrorJustReturn: ())
+    
     return Output(
+      selectedImage: selectedImageRelay.compactMap { $0.first }
+        .asDriver(onErrorJustReturn: UIImage()),
+      toImagePicker: toImagePicker,
       isMondaySelected: selectedWeekdays.compactMap { $0[.monday] },
       isTuesdaySelected: selectedWeekdays.compactMap { $0[.tuesday] },
       isWednesdaySelected: selectedWeekdays.compactMap { $0[.wednesday] },
@@ -68,6 +87,15 @@ final class GroupProfileSettingViewModel: ViewModelable {
       isSaturdaySelected: selectedWeekdays.compactMap { $0[.saturday] },
       isSundaySelected: selectedWeekdays.compactMap { $0[.sunday] }
     )
+  }
+}
+
+extension GroupProfileSettingViewModel: ASImagePickerDelegate {
+  func imagePicker(
+    _ picker: ASImagePickerViewController,
+    didComplete images: [UIImage?]
+  ) {
+    selectedImageRelay.accept(images)
   }
 }
 

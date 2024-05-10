@@ -63,16 +63,15 @@ public extension Target {
 public extension Target {
   static func demo(
     module: ModulePaths,
-    dependencies: [TargetDependency] = []
-  ) -> Target {
-    let infoFile: InfoPlist = .extendingDefault(
+    dependencies: [TargetDependency] = [],
+    infoPlist: InfoPlist = .extendingDefault(
       with: [
         "UIMainStoryboardFile": "",
         "UILaunchStoryboardName": "LaunchScreen"
       ]
     )
-    
-    return TargetSpec(infoPlist: infoFile, sources: .demo, resources: ["Demo/Resources/**"], dependencies: dependencies)
+  ) -> Target {
+    return TargetSpec(infoPlist: infoPlist, sources: .demo, resources: ["Demo/Resources/**"], dependencies: dependencies)
       .toTarget(with: module.targetName(type: .demo), product: .app)
   }
   
