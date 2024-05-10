@@ -219,13 +219,17 @@ final class GroupProfileSettingViewController: UIViewController {
   
   private func bind() {
     let input = GroupProfileSettingViewModel.Input(
+      groupName: groupNameTextField.rx.text.orEmpty,
+      groupIntroduce: groupIntroduceTextView.rx.text.orEmpty,
+      headCount: groupCountStepper.rx.value,
       mondayTapped: mondayButton.rx.tap,
       tuesdayTapped: tuesdayButton.rx.tap,
       wednesdayTapped: wednesdayButton.rx.tap,
       thursdayTapped: thursdayButton.rx.tap,
       fridayTapped: fridayButton.rx.tap,
       saturdayTapped: saturdayButton.rx.tap,
-      sundayTapped: sundayButton.rx.tap
+      sundayTapped: sundayButton.rx.tap,
+      endDate: calendarView.rx.selectedDate
     )
     
     let output = viewModel.transform(to: input)

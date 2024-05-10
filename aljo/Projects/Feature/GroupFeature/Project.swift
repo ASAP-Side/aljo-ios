@@ -17,8 +17,7 @@ let project = Project.app(
         .shared(target: .FlowKit, type: .interface),
         .rxSwift,
         .rxCocoa,
-        .snapKit,
-        .swinject
+        .snapKit
       ]
     ),
     .demo(

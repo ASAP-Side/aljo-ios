@@ -6,6 +6,8 @@
 //  Copyright © 2024 com.asap. All rights reserved.
 //
 
+import Foundation
+
 import BaseFeatureInterface
 
 import RxCocoa
@@ -13,6 +15,9 @@ import RxSwift
 
 final class GroupProfileSettingViewModel: ViewModelable {
   struct Input {
+    let groupName: ControlProperty<String>
+    let groupIntroduce: ControlProperty<String>
+    let headCount: ControlProperty<Int>
     let mondayTapped: ControlEvent<Void>
     let tuesdayTapped: ControlEvent<Void>
     let wednesdayTapped: ControlEvent<Void>
@@ -20,6 +25,7 @@ final class GroupProfileSettingViewModel: ViewModelable {
     let fridayTapped: ControlEvent<Void>
     let saturdayTapped: ControlEvent<Void>
     let sundayTapped: ControlEvent<Void>
+    let endDate: Observable<Date?>
   }
   
   struct Output {

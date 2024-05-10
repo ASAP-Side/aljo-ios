@@ -3,8 +3,6 @@ import UIKit
 import GroupFeatureImplementation
 import GroupDomainImplementation
 
-import Swinject
-
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
@@ -17,30 +15,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     window = UIWindow(frame: UIScreen.main.bounds)
     window?.backgroundColor = .systemBackground
     
-    let assembler = Assembler(
-      [
-        GroupFeatureAssembly(),
-        GroupDomainAssembly()
-      ]
-    )
-    coordinator = GroupCreateDemoCoordinator(window: window, assembler: assembler)
+    coordinator = GroupCreateDemoCoordinator(window: window)
     coordinator?.start()
     return true
   }
 }
 
 final class GroupCreateDemoCoordinator {
-  private var childCoordinator: [GroupCreateCoordinator?] = []
+  private var childCoordinator: [GroupCreateCoordinator] = []
   private let window: UIWindow?
   private let navigationController = ProgressNavigationViewController()
-  private let assembler: Assembler
   
-  init(
-    window: UIWindow?,
-    assembler: Assembler
-  ) {
+  init(window: UIWindow?) {
     self.window = window
-    self.assembler = assembler
   }
   
   func start() {
@@ -53,12 +40,10 @@ final class GroupCreateDemoCoordinator {
   }
   
   func navigateGroupPrivacySelection() {
-    let coordinator = assembler.resolver.resolve(
-      GroupCreateCoordinator.self,
-      arguments: navigationController as UINavigationController,
-      assembler
+    let coordinator = AJGroupCreateCoordinator(
+      navigationController: navigationController
     )
-    coordinator?.start()
+    coordinator.start()
     childCoordinator.append(coordinator)
   }
 }

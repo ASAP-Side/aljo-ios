@@ -10,8 +10,7 @@ import UIKit
 
 import FlowKitInterface
 import GroupDomainInterface
-
-import Swinject
+import GroupDomainImplementation
 
 public protocol GroupCreateCoordinator: Coordinator {
   func navigateGroupProfileSetting(with builder: GroupInformationBuilder)
@@ -20,29 +19,27 @@ public protocol GroupCreateCoordinator: Coordinator {
 public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
   public var childCoordinators: [Coordinator] = []
   private let navigationController: UINavigationController
-  private let assembler: Assembler
   
   public init(
-    navigationController: UINavigationController,
-    assembler: Assembler
+    navigationController: UINavigationController
   ) {
     self.navigationController = navigationController
-    self.assembler = assembler
   }
   
   public func start() {
-    let viewModel = assembler.resolver.resolve(
-      GroupPrivacySelectionViewModel.self,
-      argument: self as GroupCreateCoordinator?
-    )!
-    let viewController = assembler.resolver.resolve(
-      GroupPrivacySelectionViewController.self,
-      argument: viewModel
-    )!
+    let viewModel = GroupPrivacySelectionViewModel(
+      validGroupPasswordUseCase: AJValidGroupPasswordUseCase(),
+      groupCreateCoordinator: self
+    )
+    let viewController = GroupPrivacySelectionViewController(
+      viewModel: viewModel
+    )
     navigationController.pushViewController(viewController, animated: true)
   }
   
   public func navigateGroupProfileSetting(with builder: GroupInformationBuilder) {
-    
+    let viewModel = GroupProfileSettingViewModel()
+    let viewController = GroupProfileSettingViewController(viewModel: viewModel)
+    navigationController.pushViewController(viewController, animated: true)
   }
 }

@@ -14,8 +14,7 @@ let project = Project.app(
     .implements(
       module: .domain(.GroupDomain),
       dependencies: [
-        .domain(target: .GroupDomain, type: .interface),
-        .swinject
+        .domain(target: .GroupDomain, type: .interface)
       ]
     )
   ]

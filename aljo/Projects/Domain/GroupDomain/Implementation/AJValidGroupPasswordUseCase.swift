@@ -8,12 +8,12 @@
 
 import GroupDomainInterface
 
-final class AJValidGroupPasswordUseCase: ValidGroupPasswordUseCase {
-  func excute(with password: String) -> Bool {
+public final class AJValidGroupPasswordUseCase: ValidGroupPasswordUseCase {
+  public init() { }
+  
+  public func excute(with password: String) -> Bool {
     let passwordRegex = "[0-9]{4}"
     let isValid = password.range(of: passwordRegex, options: .regularExpression) != nil
     return isValid
   }
-  
-  init() { }
 }
