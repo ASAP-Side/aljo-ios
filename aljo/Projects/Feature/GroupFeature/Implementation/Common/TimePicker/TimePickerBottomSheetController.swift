@@ -99,7 +99,7 @@ public final class TimePickerBottomSheetController: ASBottomSheetController {
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
       $0.top.equalTo(timePicker.snp.bottom).offset(16)
-      $0.height.equalTo(52)
+      $0.height.equalToSuperview().multipliedBy(0.065)
     }
   }
 }

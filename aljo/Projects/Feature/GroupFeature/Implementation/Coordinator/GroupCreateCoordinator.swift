@@ -15,6 +15,9 @@ import GroupDomainImplementation
 
 public protocol GroupCreateCoordinator: Coordinator {
   func navigateGroupProfileSetting(with builder: GroupInformationBuilder)
+  func presentImagePickMenu(
+    delegate: ASImagePickerDelegate & GroupProfileRandomImageDelegate
+  )
   func presentImagePicker(delegate: ASImagePickerDelegate)
   func presentTimeSelect(delegate: TimePickerBottomSheetDelegate, date: Date?)
 }
@@ -44,6 +47,33 @@ public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
     let viewModel = GroupProfileSettingViewModel(coordinator: self)
     let viewController = GroupProfileSettingViewController(viewModel: viewModel)
     navigationController.pushViewController(viewController, animated: true)
+  }
+  
+  public func presentImagePickMenu(
+    delegate: ASImagePickerDelegate & GroupProfileRandomImageDelegate
+  ) {
+    let contents = [
+      MenuListCellContent(
+        image: .Icon.picture_color,
+        text: "앨범에서 선택하기",
+        action: { [weak self] in
+          self?.presentImagePicker(delegate: delegate)
+        }
+      ),
+      MenuListCellContent(
+        image: .Icon.arrow_circle,
+        text: "랜덤으로 바꾸기",
+        action: {
+          delegate.selectRandomImage()
+        }
+      )
+    ]
+    let viewController = MenuListBottomSheetController(
+      title: "이미지 변경",
+      detent: .custom(0.7),
+      contents: contents
+    )
+    navigationController.present(viewController, animated: true)
   }
   
   public func presentImagePicker(delegate: ASImagePickerDelegate) {

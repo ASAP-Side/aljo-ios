@@ -14,6 +14,10 @@ import BaseFeatureInterface
 import RxCocoa
 import RxSwift
 
+public protocol GroupProfileRandomImageDelegate {
+  func selectRandomImage()
+}
+
 final class GroupProfileSettingViewModel: ViewModelable {
   struct Input {
     let imageSelectTapped: ControlEvent<Void>
@@ -51,6 +55,7 @@ final class GroupProfileSettingViewModel: ViewModelable {
     }
   private weak var coordinator: GroupCreateCoordinator?
   private let selectedImageRelay = PublishRelay<[UIImage?]>()
+  private let randomImageRelay = PublishRelay<UIImage?>()
   private let selectedDateRelay = BehaviorRelay<Date?>(value: nil)
   private let dateFormatter: DateFormatter = {
     // TODO: DateFormatter Extension으로 분리
@@ -83,7 +88,7 @@ final class GroupProfileSettingViewModel: ViewModelable {
     
     let toImagePicker = input.imageSelectTapped
       .do(onNext: {
-        self.coordinator?.presentImagePicker(delegate: self)
+        self.coordinator?.presentImagePickMenu(delegate: self)
       })
       .asDriver(onErrorJustReturn: ())
     
@@ -115,8 +120,11 @@ final class GroupProfileSettingViewModel: ViewModelable {
       && !selectedDate.isEmpty
       && !(selectedWeekdays.filter { $0.value != false }.isEmpty)
     }
-    
-    let selectedImage = selectedImageRelay.compactMap { $0.first }
+
+    let selectedImage = Observable.merge(
+      selectedImageRelay.compactMap { $0.first },
+      randomImageRelay.asObservable()
+    )
       .startWith(generateRandomImage())
       .asDriver(onErrorJustReturn: UIImage())
     
@@ -137,6 +145,7 @@ final class GroupProfileSettingViewModel: ViewModelable {
   }
   
   private func generateRandomImage() -> UIImage {
+    // TODO: 랜덤한 이미지 생성 로직 구현
     return .AJImage.group_random1
   }
 }
@@ -147,6 +156,13 @@ extension GroupProfileSettingViewModel: ASImagePickerDelegate {
     didComplete images: [UIImage?]
   ) {
     selectedImageRelay.accept(images)
+  }
+}
+
+extension GroupProfileSettingViewModel: GroupProfileRandomImageDelegate {
+  func selectRandomImage() {
+    let randomImage = generateRandomImage()
+    randomImageRelay.accept(randomImage)
   }
 }
 
