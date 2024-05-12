@@ -33,12 +33,13 @@ final class GroupProfileSettingViewController: UIViewController {
     imageView.layer.cornerRadius = 6
     imageView.layer.borderWidth = 1
     imageView.layer.borderColor = UIColor.gray02.cgColor
-    imageView.image = .AJImage.group_random1
+    imageView.clipsToBounds = true
     return imageView
   }()
   private let imageSelectButton: UIButton = {
-    let button = UIButton()
-    button.setImage(.AJImage.group_select_circle, for: .normal)
+    let button = RoundButton(style: .image)
+    button.image = .Icon.picture_gray
+    button.alpha = 0.9
     return button
   }()
   private let imageDetailLabel: UILabel = {
@@ -296,6 +297,10 @@ final class GroupProfileSettingViewController: UIViewController {
     
     output.toTimePicker
       .drive()
+      .disposed(by: disposeBag)
+    
+    output.isNextEnable
+      .drive(nextButton.rx.isEnabled)
       .disposed(by: disposeBag)
   }
 }

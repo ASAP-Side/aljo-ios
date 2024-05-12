@@ -43,6 +43,7 @@ final class GroupProfileSettingViewModel: ViewModelable {
     let toImagePicker: Driver<Void>
     let toTimePicker: Driver<Void>
     let selectedDate: Driver<String>
+    let isNextEnable: Driver<Bool>
   }
   private let weekdaysSelectHistories: [Weekday: Bool] = Weekday.allCases
     .reduce(into: [:]) { initialValue, weekday in
@@ -99,9 +100,28 @@ final class GroupProfileSettingViewModel: ViewModelable {
       .map { self.dateFormatter.string(from: $0) }
       .asDriver(onErrorJustReturn: "")
     
+    let isNextEnable = Driver.combineLatest(
+      input.groupName.asDriver(onErrorJustReturn: ""),
+      input.groupIntroduce.asDriver(onErrorJustReturn: ""),
+      input.headCount.asDriver(onErrorJustReturn: 0),
+      input.endDate.asDriver(onErrorJustReturn: Date()),
+      selectedWeekdays,
+      selectedDate
+    ) { groupName, groupIntroduce, headCount, endDate, selectedWeekdays, selectedDate in
+      return !groupName.isEmpty
+      && !groupIntroduce.isEmpty
+      && headCount > 0
+      && endDate != nil
+      && !selectedDate.isEmpty
+      && !(selectedWeekdays.filter { $0.value != false }.isEmpty)
+    }
+    
+    let selectedImage = selectedImageRelay.compactMap { $0.first }
+      .startWith(generateRandomImage())
+      .asDriver(onErrorJustReturn: UIImage())
+    
     return Output(
-      selectedImage: selectedImageRelay.compactMap { $0.first }
-        .asDriver(onErrorJustReturn: UIImage()),
+      selectedImage: selectedImage,
       isMondaySelected: selectedWeekdays.compactMap { $0[.monday] },
       isTuesdaySelected: selectedWeekdays.compactMap { $0[.tuesday] },
       isWednesdaySelected: selectedWeekdays.compactMap { $0[.wednesday] },
@@ -111,8 +131,13 @@ final class GroupProfileSettingViewModel: ViewModelable {
       isSundaySelected: selectedWeekdays.compactMap { $0[.sunday] },
       toImagePicker: toImagePicker,
       toTimePicker: toTimePicker,
-      selectedDate: selectedDate
+      selectedDate: selectedDate,
+      isNextEnable: isNextEnable
     )
+  }
+  
+  private func generateRandomImage() -> UIImage {
+    return .AJImage.group_random1
   }
 }
 
