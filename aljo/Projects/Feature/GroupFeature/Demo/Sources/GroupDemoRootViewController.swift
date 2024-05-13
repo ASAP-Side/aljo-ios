@@ -35,13 +35,21 @@ private enum GroupScene: CaseIterable {
 
 final class GroupDemoRootViewController: UIViewController {
   weak var coordinator: GroupCreateDemoCoordinator?
-
+  
+  private let noticeLabel: UILabel = {
+    let label = UILabel()
+    label.text = "전체 플로우 이외에는 해당 화면의 UI 및 동작만 체크하는게 좋습니다."
+    label.font = UIFont.boldSystemFont(ofSize: 30)
+    label.numberOfLines = 0
+    return label
+  }()
   private let tableView: UITableView = {
     let tableView = UITableView()
     tableView.register(
       UITableViewCell.self,
       forCellReuseIdentifier: "cell"
     )
+    tableView.separatorInset.left = 0
     return tableView
   }()
   
@@ -50,9 +58,16 @@ final class GroupDemoRootViewController: UIViewController {
     tableView.delegate = self
     
     view.addSubview(tableView)
+    view.addSubview(noticeLabel)
+    
+    noticeLabel.snp.makeConstraints {
+      $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+      $0.horizontalEdges.equalToSuperview().inset(20)
+    }
     
     tableView.snp.makeConstraints {
-      $0.edges.equalTo(view.safeAreaLayoutGuide.snp.edges)
+      $0.top.equalTo(noticeLabel.snp.bottom).offset(10)
+      $0.horizontalEdges.bottom.equalToSuperview()
     }
   }
 }
@@ -78,6 +93,8 @@ extension GroupDemoRootViewController: UITableViewDataSource {
 
 extension GroupDemoRootViewController: UITableViewDelegate {
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    tableView.deselectRow(at: indexPath, animated: true)
+    
     switch GroupScene.allCases[indexPath.row] {
     case .createFull:
       coordinator?.navigateGroupPrivacySelection()
@@ -122,7 +139,7 @@ final class GroupCreateDemoCoordinator {
       navigationController: navigationController
     )
     
-    navigationController.stepCount = 1
+    navigationController.stepCount = nil
     coordinator.navigateGroupProfileSetting(with: GroupInformationBuilder())
     childCoordinator.append(coordinator)
   }
@@ -132,7 +149,7 @@ final class GroupCreateDemoCoordinator {
       navigationController: navigationController
     )
     
-    navigationController.stepCount = 1
+    navigationController.stepCount = nil
     coordinator.navigateAlarmDismissalSelectionViewController()
     childCoordinator.append(coordinator)
   }
