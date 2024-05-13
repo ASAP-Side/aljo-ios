@@ -20,6 +20,7 @@ public protocol GroupCreateCoordinator: Coordinator {
   )
   func presentImagePicker(delegate: ASImagePickerDelegate)
   func presentTimeSelect(delegate: TimePickerBottomSheetDelegate, date: Date?)
+  func navigateAlarmDismissalSelectionViewController()
 }
 
 public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
@@ -44,9 +45,16 @@ public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
   }
   
   public func navigateGroupProfileSetting(with builder: GroupInformationBuilder) {
-    let viewModel = GroupProfileSettingViewModel(coordinator: self)
+    let viewModel = GroupProfileSettingViewModel(
+      coordinator: self,
+      groupInformationBuilder: builder
+    )
     let viewController = GroupProfileSettingViewController(viewModel: viewModel)
     navigationController.pushViewController(viewController, animated: true)
+  }
+  
+  public func navigateAlarmDismissalSelectionViewController() {
+    
   }
   
   public func presentImagePickMenu(
@@ -64,7 +72,7 @@ public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
         image: .Icon.arrow_circle,
         text: "랜덤으로 바꾸기",
         action: {
-          delegate.selectRandomImage()
+          delegate.generateRandomImage()
         }
       )
     ]

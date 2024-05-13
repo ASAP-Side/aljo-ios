@@ -302,6 +302,10 @@ final class GroupProfileSettingViewController: UIViewController {
     output.isNextEnable
       .drive(nextButton.rx.isEnabled)
       .disposed(by: disposeBag)
+    
+    output.toNext
+      .drive()
+      .disposed(by: disposeBag)
   }
 }
 

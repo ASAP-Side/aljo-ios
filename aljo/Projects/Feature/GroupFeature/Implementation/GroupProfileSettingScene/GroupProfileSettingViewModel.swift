@@ -10,12 +10,13 @@ import UIKit
 
 import ASAPKit
 import BaseFeatureInterface
+import GroupDomainInterface
 
 import RxCocoa
 import RxSwift
 
-public protocol GroupProfileRandomImageDelegate {
-  func selectRandomImage()
+public protocol GroupProfileRandomImageDelegate: AnyObject {
+  func generateRandomImage()
 }
 
 final class GroupProfileSettingViewModel: ViewModelable {
@@ -48,6 +49,7 @@ final class GroupProfileSettingViewModel: ViewModelable {
     let toTimePicker: Driver<Void>
     let selectedDate: Driver<String>
     let isNextEnable: Driver<Bool>
+    let toNext: Driver<Void>
   }
   private let weekdaysSelectHistories: [Weekday: Bool] = Weekday.allCases
     .reduce(into: [:]) { initialValue, weekday in
@@ -65,8 +67,19 @@ final class GroupProfileSettingViewModel: ViewModelable {
     return dateFormatter
   }()
   
-  init(coordinator: GroupCreateCoordinator?) {
+  private var groupInformationBuilder: GroupInformationBuilder
+  
+  private var randomImage: UIImage {
+    // TODO: 랜덤한 이미지 생성 로직 구현
+    return .AJImage.group_random1
+  }
+  
+  init(
+    coordinator: GroupCreateCoordinator?,
+    groupInformationBuilder: GroupInformationBuilder
+  ) {
     self.coordinator = coordinator
+    self.groupInformationBuilder = groupInformationBuilder
   }
   
   func transform(to input: Input) -> Output {
@@ -105,28 +118,59 @@ final class GroupProfileSettingViewModel: ViewModelable {
       .map { self.dateFormatter.string(from: $0) }
       .asDriver(onErrorJustReturn: "")
     
-    let isNextEnable = Driver.combineLatest(
+    let selectedImage = Observable.merge(
+      selectedImageRelay.compactMap { $0.first },
+      randomImageRelay.asObservable()
+    )
+      .startWith(randomImage)
+      .asDriver(onErrorJustReturn: UIImage())
+    
+    let requiredSettings = Driver.combineLatest(
       input.groupName.asDriver(onErrorJustReturn: ""),
       input.groupIntroduce.asDriver(onErrorJustReturn: ""),
       input.headCount.asDriver(onErrorJustReturn: 0),
       input.endDate.asDriver(onErrorJustReturn: Date()),
       selectedWeekdays,
-      selectedDate
-    ) { groupName, groupIntroduce, headCount, endDate, selectedWeekdays, selectedDate in
-      return !groupName.isEmpty
-      && !groupIntroduce.isEmpty
-      && headCount > 0
-      && endDate != nil
-      && !selectedDate.isEmpty
-      && !(selectedWeekdays.filter { $0.value != false }.isEmpty)
+      selectedDateRelay.asDriver(onErrorJustReturn: nil),
+      selectedImage.map { $0?.pngData() }
+    ) {
+      return (
+        groupName: $0,
+        groupIntroduce: $1,
+        headCount: $2,
+        endDate: $3,
+        selectedWeekdays: $4.filter { $0.value != false }.map { $0.key },
+        selectedDate: $5,
+        selectedImage: $6
+      )
     }
-
-    let selectedImage = Observable.merge(
-      selectedImageRelay.compactMap { $0.first },
-      randomImageRelay.asObservable()
-    )
-      .startWith(generateRandomImage())
-      .asDriver(onErrorJustReturn: UIImage())
+    
+    let isNextEnable = requiredSettings
+      .map { settings in
+        return !settings.groupName.isEmpty
+        && !settings.groupIntroduce.isEmpty
+        && settings.headCount > 0
+        && settings.endDate != nil
+        && settings.selectedDate != nil
+        && !(settings.selectedWeekdays.isEmpty)
+      }
+    
+    let toNext = requiredSettings
+      .map {
+        self.groupInformationBuilder
+          .setMainImage($0.selectedImage)
+          .setName($0.groupName)
+          .setIntroduction($0.groupIntroduce)
+          .setHeadCount($0.headCount)
+          .setWeekdays($0.selectedWeekdays)
+          .setAlarmTime($0.selectedDate)
+          .setEndDate($0.endDate)
+      }
+      .do(onNext: {
+        // TODO: 세팅값 전달은 추후에 기획 완성되면 구현 예정
+        self.coordinator?.navigateAlarmDismissalSelectionViewController()
+      })
+      .map { _ in }
     
     return Output(
       selectedImage: selectedImage,
@@ -140,13 +184,9 @@ final class GroupProfileSettingViewModel: ViewModelable {
       toImagePicker: toImagePicker,
       toTimePicker: toTimePicker,
       selectedDate: selectedDate,
-      isNextEnable: isNextEnable
+      isNextEnable: isNextEnable,
+      toNext: toNext
     )
-  }
-  
-  private func generateRandomImage() -> UIImage {
-    // TODO: 랜덤한 이미지 생성 로직 구현
-    return .AJImage.group_random1
   }
 }
 
@@ -160,8 +200,7 @@ extension GroupProfileSettingViewModel: ASImagePickerDelegate {
 }
 
 extension GroupProfileSettingViewModel: GroupProfileRandomImageDelegate {
-  func selectRandomImage() {
-    let randomImage = generateRandomImage()
+  func generateRandomImage() {
     randomImageRelay.accept(randomImage)
   }
 }
@@ -173,14 +212,4 @@ extension GroupProfileSettingViewModel: TimePickerBottomSheetDelegate {
   ) {
     selectedDateRelay.accept(date)
   }
-}
-
-enum Weekday: CaseIterable {
-  case monday
-  case tuesday
-  case wednesday
-  case thursday
-  case friday
-  case saturday
-  case sunday
 }
