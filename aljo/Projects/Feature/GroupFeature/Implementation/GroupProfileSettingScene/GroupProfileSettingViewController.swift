@@ -243,7 +243,8 @@ final class GroupProfileSettingViewController: UIViewController {
       saturdayTapped: saturdayButton.rx.tap,
       sundayTapped: sundayButton.rx.tap,
       alarmTimePickTapped: timePickerTapGesture.rx.event.map { _ in },
-      endDate: calendarView.rx.selectedDate
+      endDate: calendarView.rx.selectedDate,
+      nextTapped: nextButton.rx.tap
     )
     
     let output = viewModel.transform(to: input)

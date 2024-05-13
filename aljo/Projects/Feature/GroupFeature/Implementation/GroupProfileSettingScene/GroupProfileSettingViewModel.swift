@@ -34,6 +34,7 @@ final class GroupProfileSettingViewModel: ViewModelable {
     let sundayTapped: ControlEvent<Void>
     let alarmTimePickTapped: Observable<Void>
     let endDate: Observable<Date?>
+    let nextTapped: ControlEvent<Void>
   }
   
   struct Output {
@@ -155,7 +156,7 @@ final class GroupProfileSettingViewModel: ViewModelable {
         && !(settings.selectedWeekdays.isEmpty)
       }
     
-    let toNext = requiredSettings
+    let toNext = input.nextTapped.withLatestFrom(requiredSettings)
       .map {
         self.groupInformationBuilder
           .setMainImage($0.selectedImage)
@@ -171,6 +172,7 @@ final class GroupProfileSettingViewModel: ViewModelable {
         self.coordinator?.navigateAlarmDismissalSelectionViewController()
       })
       .map { _ in }
+      .asDriver(onErrorJustReturn: ())
     
     return Output(
       selectedImage: selectedImage,

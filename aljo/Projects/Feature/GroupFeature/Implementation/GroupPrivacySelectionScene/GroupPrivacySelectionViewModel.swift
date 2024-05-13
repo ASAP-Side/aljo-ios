@@ -17,7 +17,7 @@ final class GroupPrivacySelectionViewModel: ViewModelable {
     let publicTapped: ControlEvent<Void>
     let privateTapped: ControlEvent<Void>
     let password: ControlProperty<String>
-    let nextButtonTapped: ControlEvent<Void>
+    let nextTapped: ControlEvent<Void>
   }
   
   struct Output {
@@ -78,7 +78,7 @@ final class GroupPrivacySelectionViewModel: ViewModelable {
       return (isPublic: $0, password: $1)
     }
     
-    let toNext = input.nextButtonTapped.withLatestFrom(privacyAndPassword) {
+    let toNext = input.nextTapped.withLatestFrom(privacyAndPassword) {
       return ($1.isPublic, $1.isPublic ? nil : $1.password)
     }
       .map { isPublic, password in

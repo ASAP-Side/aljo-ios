@@ -98,7 +98,7 @@ final class GroupPrivacySelectionViewController: UIViewController {
       publicTapped: publicButton.rx.tap,
       privateTapped: privateButton.rx.tap,
       password: passwordTextField.rx.text.orEmpty,
-      nextButtonTapped: nextButton.rx.tap
+      nextTapped: nextButton.rx.tap
     )
     
     let output = viewModel.transform(to: input)
