@@ -10,9 +10,13 @@ import UIKit
 
 import ASAPKit
 
+import RxSwift
+import RxCocoa
 import SnapKit
 
 public final class AlarmDismissalSelectionViewController: UIViewController {
+  private let disposeBag = DisposeBag()
+  private let viewModel: AlarmDismissalSelectionViewModel
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.text = "아삽아삽님만의 알람 방식을\n선택해주세요!"
@@ -45,14 +49,47 @@ public final class AlarmDismissalSelectionViewController: UIViewController {
     return button
   }()
   
+  init(viewModel: AlarmDismissalSelectionViewModel) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  @available(*, unavailable, message: "스토리 보드로 생성할 수 없습니다.")
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   public override func viewDidLoad() {
     configureUI()
+    bind()
+  }
+  
+  private func bind() {
+    let input = AlarmDismissalSelectionViewModel.Input(
+      eyeTrackingTapped: eyeTrackingButton.rx.tap,
+      slideToUnlockTapped: slideToUnlockButton.rx.tap
+    )
+    
+    let output = viewModel.transform(to: input)
+    
+    output.isEyeTrackingSelected
+      .drive(eyeTrackingButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.isSlideToUnlockSelected
+      .drive(slideToUnlockButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.isNextEnable
+      .drive(nextButton.rx.isEnabled)
+      .disposed(by: disposeBag)
   }
 }
 
 // MARK: Configure UI
 extension AlarmDismissalSelectionViewController {
   private func configureUI() {
+    view.backgroundColor = .systemBackground
     configureHierarchy()
     configureConstraints()
   }
