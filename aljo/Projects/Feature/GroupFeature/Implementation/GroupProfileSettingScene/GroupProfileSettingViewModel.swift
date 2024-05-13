@@ -15,7 +15,7 @@ import GroupDomainInterface
 import RxCocoa
 import RxSwift
 
-public protocol GroupProfileRandomImageDelegate: AnyObject {
+public protocol GroupRandomImageDelegate: AnyObject {
   func generateRandomImage()
 }
 
@@ -199,7 +199,7 @@ extension GroupProfileSettingViewModel: ASImagePickerDelegate {
   }
 }
 
-extension GroupProfileSettingViewModel: GroupProfileRandomImageDelegate {
+extension GroupProfileSettingViewModel: GroupRandomImageDelegate {
   func generateRandomImage() {
     randomImageRelay.accept(randomImage)
   }

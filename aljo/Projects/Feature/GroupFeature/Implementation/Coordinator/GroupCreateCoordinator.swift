@@ -16,7 +16,7 @@ import GroupDomainImplementation
 public protocol GroupCreateCoordinator: Coordinator {
   func navigateGroupProfileSetting(with builder: GroupInformationBuilder)
   func presentImagePickMenu(
-    delegate: ASImagePickerDelegate & GroupProfileRandomImageDelegate
+    delegate: ASImagePickerDelegate & GroupRandomImageDelegate
   )
   func presentImagePicker(delegate: ASImagePickerDelegate)
   func presentTimeSelect(delegate: TimePickerBottomSheetDelegate, date: Date?)
@@ -58,7 +58,7 @@ public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
   }
   
   public func presentImagePickMenu(
-    delegate: ASImagePickerDelegate & GroupProfileRandomImageDelegate
+    delegate: ASImagePickerDelegate & GroupRandomImageDelegate
   ) {
     let contents = [
       MenuListCellContent(
