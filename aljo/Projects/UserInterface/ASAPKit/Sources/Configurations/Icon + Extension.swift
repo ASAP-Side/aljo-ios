@@ -51,6 +51,10 @@ public extension UIImage {
     // privacy
     public static let `public`: UIImage = ASAPKitAsset.Privacy.public.image
     public static let `private`: UIImage = ASAPKitAsset.Privacy.private.image
+    
+    // dissmissal content
+    public static let eyetracking: UIImage = ASAPKitAsset.DissmisalContent.eyetracking.image
+    public static let slide: UIImage = ASAPKitAsset.DissmisalContent.slide.image
   }
 }
 // swiftlint: enable all
