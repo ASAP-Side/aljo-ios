@@ -54,7 +54,7 @@ public extension UIImage {
     
     // dissmissal content
     public static let eye_tracking: UIImage = ASAPKitAsset.DissmisalContent.eyeTracking.image
-    public static let slide: UIImage = ASAPKitAsset.DissmisalContent.slide.image
+    public static let slide_to_unlock: UIImage = ASAPKitAsset.DissmisalContent.slideToUnlock.image
   }
 }
 // swiftlint: enable all
