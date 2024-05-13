@@ -39,15 +39,14 @@ final class GroupPrivacySelectionViewController: UIViewController {
     label.font = .pretendard(.body4)
     return label
   }()
-  
-  // TODO: 이미지 변경
+
   private let publicButton = PrivacyButton(
-    image: .Icon.arrow_circle,
+    image: .Icon.public,
     title: "공개"
   )
   
   private let privateButton = PrivacyButton(
-    image: .Icon.arrow_circle,
+    image: .Icon.private,
     title: "비공개"
   )
   

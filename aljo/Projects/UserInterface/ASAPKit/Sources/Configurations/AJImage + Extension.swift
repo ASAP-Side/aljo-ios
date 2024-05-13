@@ -12,7 +12,7 @@ import UIKit
 public extension UIImage {
   enum AJImage {
     public static let group_random1 = ASAPKitAsset.Group.random1.image
-    public static let group_select_circle = ASAPKitAsset.Group.selectCircle.image
+    public static let group_image_select = ASAPKitAsset.Group.imageSelect.image
   }
 }
 // swiftlint: enable all

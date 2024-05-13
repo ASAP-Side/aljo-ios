@@ -72,15 +72,14 @@ extension PrivacyButton {
 // MARK: Configure UI
 extension PrivacyButton {
   private func selectedHandler() {
-    // TODO: 이미지 변경
     if isSelected == true {
       layer.borderColor = UIColor.red01.cgColor
       backgroundColor = .red02
-      rightImageView.image = .Icon.camera_black
+      rightImageView.image = .Icon.circle_check_color
     } else {
       layer.borderColor = UIColor.gray02.cgColor
       backgroundColor = .white
-      rightImageView.image = .Icon.camera_gray
+      rightImageView.image = .Icon.circle_check_gray
     }
   }
   
