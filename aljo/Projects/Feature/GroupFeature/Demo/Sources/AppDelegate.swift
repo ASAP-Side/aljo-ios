@@ -20,30 +20,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     return true
   }
 }
-
-final class GroupCreateDemoCoordinator {
-  private var childCoordinator: [GroupCreateCoordinator] = []
-  private let window: UIWindow?
-  private let navigationController = ProgressNavigationViewController()
-  
-  init(window: UIWindow?) {
-    self.window = window
-  }
-  
-  func start() {
-    let controller = GroupDemoRootViewController()
-    controller.coordinator = self
-    navigationController.viewControllers = [controller]
-    navigationController.stepCount = 4
-    window?.rootViewController = navigationController
-    window?.makeKeyAndVisible()
-  }
-  
-  func navigateGroupPrivacySelection() {
-    let coordinator = AJGroupCreateCoordinator(
-      navigationController: navigationController
-    )
-    coordinator.start()
-    childCoordinator.append(coordinator)
-  }
-}
