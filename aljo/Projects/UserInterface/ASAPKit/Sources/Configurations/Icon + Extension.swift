@@ -53,7 +53,7 @@ public extension UIImage {
     public static let `private`: UIImage = ASAPKitAsset.Privacy.private.image
     
     // dissmissal content
-    public static let eyetracking: UIImage = ASAPKitAsset.DissmisalContent.eyetracking.image
+    public static let eye_tracking: UIImage = ASAPKitAsset.DissmisalContent.eyeTracking.image
     public static let slide: UIImage = ASAPKitAsset.DissmisalContent.slide.image
   }
 }

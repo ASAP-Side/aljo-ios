@@ -245,12 +245,14 @@ extension GroupPrivacySelectionViewController {
       $0.top.equalTo(subTitleLabel.snp.bottom).offset(30)
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
+      $0.height.equalToSuperview().multipliedBy(0.085)
     }
     
     privateButton.snp.makeConstraints {
       $0.top.equalTo(publicButton.snp.bottom).offset(8)
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().offset(-20)
+      $0.height.equalToSuperview().multipliedBy(0.085)
     }
     
     passwordTextFieldTitleLabel.snp.makeConstraints {

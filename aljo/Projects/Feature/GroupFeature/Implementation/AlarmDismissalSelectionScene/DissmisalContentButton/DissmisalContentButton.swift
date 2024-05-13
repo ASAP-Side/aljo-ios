@@ -1,32 +1,22 @@
 //
-//  PrivacyButton.swift
+//  DissmisalContentButton.swift
 //  GroupFeatureImplementation
 //
-//  Created by 이태영 on 4/29/24.
+//  Created by 이태영 on 5/13/24.
 //  Copyright © 2024 com.asap. All rights reserved.
 //
 
 import UIKit
 
-import SnapKit
-
-final class PrivacyButton: UIControl {
+final class DissmisalContentButton: UIControl {
   private let titleLabel: UILabel = {
     let label = UILabel()
-    label.font = .pretendard(.headLine4)
-    label.textColor = .black01
+    label.font = .pretendard(.body2)
     return label
   }()
   
-  private let leftImageView: UIImageView = {
+  private let imageView: UIImageView = {
     let imageView = UIImageView()
-    return imageView
-  }()
-  
-  private let rightImageView: UIImageView = {
-    let imageView = UIImageView()
-    // TODO: 이미지 변경
-    imageView.image = .Icon.camera_gray
     return imageView
   }()
   
@@ -44,7 +34,7 @@ final class PrivacyButton: UIControl {
     super.init(frame: .zero)
     
     titleLabel.text = title
-    leftImageView.image = image
+    imageView.image = image
     configureUI()
   }
   
@@ -55,18 +45,18 @@ final class PrivacyButton: UIControl {
 }
 
 // MARK: Configure UI
-extension PrivacyButton {
+extension DissmisalContentButton {
   private func selectedHandler() {
     if isSelected == true {
       layer.borderWidth = 1.5
       layer.borderColor = UIColor.red01.cgColor
-      backgroundColor = .red02
-      rightImageView.image = .Icon.circle_check_color
+      titleLabel.font = .pretendard(.headLine4)
+      titleLabel.textColor = .red01
     } else {
       layer.borderWidth = 1
       layer.borderColor = UIColor.gray02.cgColor
-      backgroundColor = .white
-      rightImageView.image = .Icon.circle_check_gray
+      titleLabel.font = .pretendard(.body2)
+      titleLabel.textColor = .black01
     }
   }
   
@@ -76,7 +66,7 @@ extension PrivacyButton {
   }
   
   private func configureHirearchy() {
-    [titleLabel, leftImageView, rightImageView].forEach {
+    [imageView, titleLabel].forEach {
       addSubview($0)
     }
     
@@ -86,18 +76,13 @@ extension PrivacyButton {
   }
   
   private func configureConstraints() {
-    leftImageView.snp.makeConstraints {
+    imageView.snp.makeConstraints {
       $0.leading.equalToSuperview().offset(20)
       $0.centerY.equalToSuperview()
     }
     
     titleLabel.snp.makeConstraints {
-      $0.leading.equalTo(leftImageView.snp.trailing).offset(10)
-      $0.centerY.equalToSuperview()
-    }
-    
-    rightImageView.snp.makeConstraints {
-      $0.trailing.equalToSuperview().offset(-20)
+      $0.leading.equalTo(imageView.snp.trailing).offset(10)
       $0.centerY.equalToSuperview()
     }
   }
