@@ -135,17 +135,6 @@ public extension UIButton.Configuration {
       }
     }
     
-    var strokeWidth: CGFloat {
-      switch self {
-      case .fill:
-        return 0
-      case .stroke:
-        return 1.5
-      case .strokeImage:
-        return 1.5
-      }
-    }
-    
     var strokeColor: UIColor? {
       switch self {
       case .fill:
@@ -193,7 +182,6 @@ public extension UIButton.Configuration {
     
     var backgroundConfiguration = UIBackgroundConfiguration.clear()
     backgroundConfiguration.strokeColor = style.strokeColor
-    backgroundConfiguration.strokeWidth = style.strokeWidth
     backgroundConfiguration.cornerRadius = style.cornerRadius
     configuration.background = backgroundConfiguration
     

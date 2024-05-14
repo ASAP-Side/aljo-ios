@@ -25,8 +25,7 @@ final class PrivacyButton: UIControl {
   
   private let rightImageView: UIImageView = {
     let imageView = UIImageView()
-    // TODO: 이미지 변경
-    imageView.image = .Icon.camera_gray
+    imageView.image = .Icon.circle_check_gray
     return imageView
   }()
   
@@ -89,6 +88,8 @@ extension PrivacyButton {
     leftImageView.snp.makeConstraints {
       $0.leading.equalToSuperview().offset(20)
       $0.centerY.equalToSuperview()
+      $0.height.equalToSuperview().multipliedBy(0.412)
+      $0.width.equalTo(rightImageView.snp.height)
     }
     
     titleLabel.snp.makeConstraints {
@@ -99,6 +100,8 @@ extension PrivacyButton {
     rightImageView.snp.makeConstraints {
       $0.trailing.equalToSuperview().offset(-20)
       $0.centerY.equalToSuperview()
+      $0.height.equalToSuperview().multipliedBy(0.412)
+      $0.width.equalTo(rightImageView.snp.height)
     }
   }
 }

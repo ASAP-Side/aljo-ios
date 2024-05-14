@@ -17,8 +17,11 @@ import SnapKit
 public final class AlarmDismissalSelectionViewController: UIViewController {
   private let disposeBag = DisposeBag()
   private let viewModel: AlarmDismissalSelectionViewModel
+  
+  // MARK: Components
   private let titleLabel: UILabel = {
     let label = UILabel()
+    // TODO: 닉네임 동적으로 변경
     label.text = "아삽아삽님만의 알람 방식을\n선택해주세요!"
     label.textColor = .black01
     label.font = .pretendard(.headLine1)
