@@ -193,7 +193,7 @@ extension ASTextView: UITextViewDelegate {
     
     if changedText.count <= maxLength { return true }
     
-    let lastCharacter = (currentText as String).last ?? Character("")
+    let lastCharacter = (currentText as String).last ?? Character(".")
     let separatedCharacters = String(lastCharacter)
       .decomposedStringWithCanonicalMapping
       .unicodeScalars

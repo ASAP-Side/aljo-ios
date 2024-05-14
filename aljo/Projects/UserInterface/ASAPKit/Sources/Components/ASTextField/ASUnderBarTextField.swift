@@ -213,7 +213,7 @@ extension ASUnderBarTextField: UITextFieldDelegate {
       return true
     }
     
-    let lastCharacter = (currentText as String).last ?? Character("")
+    let lastCharacter = (currentText as String).last ?? Character(".")
     let separatedCharacters = String(lastCharacter)
       .decomposedStringWithCanonicalMapping
       .unicodeScalars
