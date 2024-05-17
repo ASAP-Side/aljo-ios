@@ -18,9 +18,9 @@ public protocol GroupCreateCoordinator: Coordinator {
   func presentImagePickMenu(
     delegate: ASImagePickerDelegate & GroupRandomImageDelegate
   )
-  func presentImagePicker(delegate: ASImagePickerDelegate)
   func presentTimeSelect(delegate: TimePickerBottomSheetDelegate, date: Date?)
-  func navigateAlarmDismissalSelectionViewController()
+  func navigateAlarmDismissalSelection()
+  func navigateAlarmInteractionSetting()
 }
 
 public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
@@ -53,8 +53,16 @@ public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
     navigationController.pushViewController(viewController, animated: true)
   }
   
-  public func navigateAlarmDismissalSelectionViewController() {
-    
+  public func navigateAlarmDismissalSelection() {
+    let viewModel = AlarmDismissalSelectionViewModel()
+    let viewController = AlarmDismissalSelectionViewController(viewModel: viewModel)
+    navigationController.pushViewController(viewController, animated: true)
+  }
+  
+  public func navigateAlarmInteractionSetting() {
+    let viewModel = AlarmInteractionSettingViewModel()
+    let viewController = AlarmInteractionSettingViewController(viewModel: viewModel)
+    navigationController.pushViewController(viewController, animated: true)
   }
   
   public func presentImagePickMenu(
@@ -84,7 +92,7 @@ public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
     navigationController.present(viewController, animated: true)
   }
   
-  public func presentImagePicker(delegate: ASImagePickerDelegate) {
+  private func presentImagePicker(delegate: ASImagePickerDelegate) {
     let navigationBarController = UINavigationController()
     let viewController = ASImagePickerViewController(max: 1)
     navigationBarController.setViewControllers([viewController], animated: false)

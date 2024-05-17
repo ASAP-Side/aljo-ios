@@ -18,6 +18,7 @@ private enum GroupScene: CaseIterable {
   case privacySelection
   case profileSetting
   case dismissalSelection
+  case interactionSetting
   
   var title: String {
     switch self {
@@ -29,6 +30,8 @@ private enum GroupScene: CaseIterable {
       return "그룹 정보 설정화면"
     case .dismissalSelection:
       return "알람 해제 컨텐츠 설정화면"
+    case .interactionSetting:
+      return "알람 인터랙션 설정 화면"
     }
   }
 }
@@ -104,6 +107,8 @@ extension GroupDemoRootViewController: UITableViewDelegate {
       coordinator?.navigateGroupPrivacySelection()
     case .profileSetting:
       coordinator?.navigateGroupProfileSetting()
+    case .interactionSetting:
+      coordinator?.navigationInteractionSetting()
     }
   }
 }
@@ -150,7 +155,17 @@ final class GroupCreateDemoCoordinator {
     )
     
     navigationController.stepCount = nil
-    coordinator.navigateAlarmDismissalSelectionViewController()
+    coordinator.navigateAlarmDismissalSelection()
+    childCoordinator.append(coordinator)
+  }
+  
+  func navigationInteractionSetting() {
+    let coordinator = AJGroupCreateCoordinator(
+      navigationController: navigationController
+    )
+    
+    navigationController.stepCount = nil
+    coordinator.navigateAlarmInteractionSetting()
     childCoordinator.append(coordinator)
   }
 }

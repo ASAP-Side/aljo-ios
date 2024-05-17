@@ -169,7 +169,7 @@ final class GroupProfileSettingViewModel: ViewModelable {
       }
       .do(onNext: {
         // TODO: 세팅값 전달은 추후에 기획 완성되면 구현 예정
-        self.coordinator?.navigateAlarmDismissalSelectionViewController()
+        self.coordinator?.navigateAlarmDismissalSelection()
       })
       .map { _ in }
       .asDriver(onErrorJustReturn: ())
