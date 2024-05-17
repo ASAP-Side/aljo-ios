@@ -41,6 +41,10 @@ public final class ASListView: UIView {
     itemStackView.frame.origin
   }
   
+  public var contentViews: [UIView] {
+    itemStackView.arrangedSubviews
+  }
+  
   public func addItem(_ item: UIView, title: String? = nil) {
     let headerBox = HeaderBox(contentView: item, title: title)
     itemStackView.addArrangedSubview(headerBox)

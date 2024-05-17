@@ -15,6 +15,9 @@ import RxCocoa
 import SnapKit
 
 final class AlarmInteractionSettingViewController: UIViewController {
+  private let disposeBag = DisposeBag()
+  private let viewModel: AlarmInteractionSettingViewModel
+  
   // MARK: Components
   private let titleLabel: UILabel = {
     let label = UILabel()
@@ -32,13 +35,12 @@ final class AlarmInteractionSettingViewController: UIViewController {
     return listView
   }()
   
-  private let soundButton: UIButton = {
+  private let soundOnlyButton: UIButton = {
     let button = ASRectButton(style: .stroke)
     button.title = "소리"
-    button.isSelected = true
     return button
   }()
-  private let vibrateButton: UIButton = {
+  private let vibrateOnlyButton: UIButton = {
     let button = ASRectButton(style: .stroke)
     button.title = "진동"
     return button
@@ -102,6 +104,7 @@ final class AlarmInteractionSettingViewController: UIViewController {
     slider.leftTintColor = .red01
     slider.rightImage = .Icon.sound
     slider.leftImage = .Icon.mute
+    slider.value = 0.1
     return slider
   }()
   private let volumeSliderStackView: UIStackView = {
@@ -113,15 +116,60 @@ final class AlarmInteractionSettingViewController: UIViewController {
     return stackView
   }()
   
-  private let nextButton: UIButton = {
+  private let confirmButton: UIButton = {
     let button = ASRectButton(style: .fill)
-    button.title = "다음"
+    button.title = "확인"
     button.isEnabled = false
     return button
   }()
+
+  init(viewModel: AlarmInteractionSettingViewModel) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
   
   override func viewDidLoad() {
     configureUI()
+    bind()
+  }
+  
+  private func bind() {
+    let input = AlarmInteractionSettingViewModel.Input(
+      soundOnlyTapped: soundOnlyButton.rx.tap,
+      vibrateOnlyTapped: vibrateOnlyButton.rx.tap,
+      soundAndVibrateTapped: soundAndVibrateButton.rx.tap,
+      volume: volumeSlider.rx.value
+    )
+    
+    let output = viewModel.transform(to: input)
+    
+    output.isSoundOnlySelected
+      .drive(soundOnlyButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.isVibrateOnlySelected
+      .drive(vibrateOnlyButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.isSoundAndVibrateSelected
+      .drive(soundAndVibrateButton.rx.isSelected)
+      .disposed(by: disposeBag)
+    
+    output.isSoundSettingHidden
+      .startWith(true)
+      .drive(
+        listView.contentViews[1].rx.isHidden,
+        listView.contentViews[2].rx.isHidden
+      )
+      .disposed(by: disposeBag)
+    
+    output.isConfirmEnable
+      .drive(confirmButton.rx.isEnabled)
+      .disposed(by: disposeBag)
   }
 }
 
@@ -137,12 +185,12 @@ extension AlarmInteractionSettingViewController {
     [
       titleLabel,
       listView,
-      nextButton
+      confirmButton
     ].forEach {
       view.addSubview($0)
     }
     
-    [soundButton, vibrateButton, soundAndVibrateButton].forEach {
+    [soundOnlyButton, vibrateOnlyButton, soundAndVibrateButton].forEach {
       interactionButtonStackView.addArrangedSubview($0)
     }
     
@@ -182,7 +230,7 @@ extension AlarmInteractionSettingViewController {
       $0.height.equalTo(view.snp.height).multipliedBy(0.03)
     }
     
-    nextButton.snp.makeConstraints {
+    confirmButton.snp.makeConstraints {
       $0.horizontalEdges.equalToSuperview().inset(20)
       $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         .inset(safeAreaBottomInset())
