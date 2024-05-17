@@ -70,7 +70,8 @@ public final class AlarmDismissalSelectionViewController: UIViewController {
   private func bind() {
     let input = AlarmDismissalSelectionViewModel.Input(
       eyeTrackingTapped: eyeTrackingButton.rx.tap,
-      slideToUnlockTapped: slideToUnlockButton.rx.tap
+      slideToUnlockTapped: slideToUnlockButton.rx.tap,
+      nextTapped: nextButton.rx.tap
     )
     
     let output = viewModel.transform(to: input)
@@ -85,6 +86,10 @@ public final class AlarmDismissalSelectionViewController: UIViewController {
     
     output.isNextEnable
       .drive(nextButton.rx.isEnabled)
+      .disposed(by: disposeBag)
+    
+    output.toNext
+      .drive()
       .disposed(by: disposeBag)
   }
 }

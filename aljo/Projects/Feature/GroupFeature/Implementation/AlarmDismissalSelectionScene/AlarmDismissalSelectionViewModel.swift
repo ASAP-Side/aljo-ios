@@ -15,12 +15,20 @@ final class AlarmDismissalSelectionViewModel: ViewModelable {
   struct Input {
     let eyeTrackingTapped: ControlEvent<Void>
     let slideToUnlockTapped: ControlEvent<Void>
+    let nextTapped: ControlEvent<Void>
   }
   
   struct Output {
     let isEyeTrackingSelected: Driver<Bool>
     let isSlideToUnlockSelected: Driver<Bool>
     let isNextEnable: Driver<Bool>
+    let toNext: Driver<Void>
+  }
+  
+  private weak var coordinator: GroupCreateCoordinator?
+  
+  init(coordinator: GroupCreateCoordinator) {
+    self.coordinator = coordinator
   }
   
   func transform(to input: Input) -> Output {
@@ -43,10 +51,17 @@ final class AlarmDismissalSelectionViewModel: ViewModelable {
       .map { _ in true }
       .distinctUntilChanged()
     
+    let toNext = input.nextTapped
+      .do(onNext: {
+        self.coordinator?.navigateAlarmInteractionSetting()
+      })
+      .asDriver(onErrorJustReturn: ())
+    
     return Output(
       isEyeTrackingSelected: isEyeTrackingSelected,
       isSlideToUnlockSelected: isSlideToUnlockSelected,
-      isNextEnable: isNextEnable
+      isNextEnable: isNextEnable,
+      toNext: toNext
     )
   }
 }

@@ -54,7 +54,9 @@ public final class AJGroupCreateCoordinator: GroupCreateCoordinator {
   }
   
   public func navigateAlarmDismissalSelection() {
-    let viewModel = AlarmDismissalSelectionViewModel()
+    let viewModel = AlarmDismissalSelectionViewModel(
+      coordinator: self
+    )
     let viewController = AlarmDismissalSelectionViewController(viewModel: viewModel)
     navigationController.pushViewController(viewController, animated: true)
   }
