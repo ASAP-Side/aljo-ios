@@ -85,6 +85,7 @@ enum ComponentsCategory: DemoDetail, CustomStringConvertible, CaseIterable {
   case roundButton
   case stepper
   case slider
+  case alarmSetting
   
   var description: String {
     switch self {
@@ -100,6 +101,8 @@ enum ComponentsCategory: DemoDetail, CustomStringConvertible, CaseIterable {
         return "Slider"
       case .stepper:
         return "Stepper"
+      case .alarmSetting:
+        return "AlarmSetting"
     }
   }
   
@@ -117,6 +120,8 @@ enum ComponentsCategory: DemoDetail, CustomStringConvertible, CaseIterable {
         return ASSliderDemoController()
       case .stepper:
         return ASStepperDemoController()
+      case .alarmSetting:
+        return ASAlarmSettingDemoController()
     }
   }
 }
