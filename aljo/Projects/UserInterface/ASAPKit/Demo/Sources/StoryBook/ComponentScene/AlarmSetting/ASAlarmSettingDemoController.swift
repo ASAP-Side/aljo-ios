@@ -109,7 +109,7 @@ final class ASAlarmSettingDemoController: ComponentViewController {
       .bind(to: styleLabel.rx.text)
       .disposed(by: disposeBag)
     
-    alarmSettingView.rx.tapSelectAlarm
+    alarmSettingView.rx.tapSelectMusic
       .withUnretained(tapLabel)
       .map { label, _ in
         return label.text!.isEmpty ? "노래 선택 탭!" : ""

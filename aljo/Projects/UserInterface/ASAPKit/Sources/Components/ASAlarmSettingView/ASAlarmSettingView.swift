@@ -14,7 +14,7 @@ import RxCocoa
 
 public final class ASAlarmSettingView: UIView {
   // MARK: - Public Property
-  public enum AlarmStyle: Int {
+  public enum AlarmStyle {
     case sound
     case vibration
     case both
@@ -87,7 +87,7 @@ public final class ASAlarmSettingView: UIView {
     return label
   }()
   
-  fileprivate let alarmSelectButton: ASRectButton = {
+  fileprivate let musicSelectButton: ASRectButton = {
     let button =  ASRectButton(
       style: .strokeImage(
         padding: .dynamic,
@@ -133,6 +133,8 @@ public final class ASAlarmSettingView: UIView {
     slider.tintColor = .red01
     slider.leftImage = .Icon.mute
     slider.rightImage = .Icon.sound
+    slider.leftTintColor = .red01
+    slider.rightTintColor = .gray03
     return slider
   }()
   
@@ -161,7 +163,7 @@ public final class ASAlarmSettingView: UIView {
       alarmStyleLabel,
       alramStyleStackView,
       alarmSoundLabel,
-      alarmSelectButton,
+      musicSelectButton,
       selectedAlarmLabel,
       alarmVolumeLabel,
       volumeCaptionLabel,
@@ -196,20 +198,20 @@ public final class ASAlarmSettingView: UIView {
       make.leading.equalToSuperview()
     }
     
-    alarmSelectButton.snp.makeConstraints { make in
+    musicSelectButton.snp.makeConstraints { make in
       make.top.equalTo(alarmSoundLabel.snp.bottom).offset(8)
       make.leading.trailing.equalToSuperview()
       make.height.equalTo(48)
     }
     
     selectedAlarmLabel.snp.makeConstraints { make in
-      make.centerY.equalTo(alarmSelectButton)
+      make.centerY.equalTo(musicSelectButton)
       make.leading.equalTo(self.snp.centerX).offset(10)
-      make.trailing.equalTo(alarmSelectButton.snp.trailing).inset(35)
+      make.trailing.equalTo(musicSelectButton.snp.trailing).inset(35)
     }
     
     alarmVolumeLabel.snp.makeConstraints { make in
-      make.top.equalTo(alarmSelectButton.snp.bottom).offset(30)
+      make.top.equalTo(musicSelectButton.snp.bottom).offset(30)
       make.leading.equalToSuperview()
     }
     
@@ -242,7 +244,7 @@ public final class ASAlarmSettingView: UIView {
       .bind(with: self) { owner, style in
         let isHidden = style == .vibration
           owner.alarmSoundLabel.isHidden = isHidden
-          owner.alarmSelectButton.isHidden = isHidden
+          owner.musicSelectButton.isHidden = isHidden
           owner.selectedAlarmLabel.isHidden = isHidden
           owner.alarmVolumeLabel.isHidden = isHidden
           owner.volumeCaptionLabel.isHidden = isHidden
@@ -287,8 +289,8 @@ public extension Reactive where Base: ASAlarmSettingView {
   }
   
   /// 사용자가 노래 선택을 터치했음을 알립니다.
-  var tapSelectAlarm: ControlEvent<Void> {
-    self.base.alarmSelectButton.rx.tap
+  var tapSelectMusic: ControlEvent<Void> {
+    self.base.musicSelectButton.rx.tap
   }
  
   /// 사용자가 선택한 노래 제목입니다.
