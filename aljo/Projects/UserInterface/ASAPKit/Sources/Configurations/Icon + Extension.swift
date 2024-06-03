@@ -1,5 +1,5 @@
 //
-//  Color + Extension.swift
+//  Icon + Extension.swift
 //  ASAPKit
 //
 //  Copyright (c) 2024 Minii All rights reserved.
@@ -34,6 +34,8 @@ public extension UIImage {
     public static let scope: UIImage = ASAPKitAsset.Symbols.scope.image
     public static let mute: UIImage = ASAPKitAsset.Symbols.soundMute.image
     public static let sound: UIImage = ASAPKitAsset.Symbols.sound.image
+    public static let circle_check_gray: UIImage = ASAPKitAsset.Symbols.circleCheckGray.image
+    public static let circle_check_color: UIImage = ASAPKitAsset.Symbols.circleCheckColor.image
     
     // xmark
     public static let xmark_black: UIImage = ASAPKitAsset.Xmark.removeBlack.image
@@ -45,6 +47,14 @@ public extension UIImage {
     // profile
     public static let camera_button: UIImage = ASAPKitAsset.Profile.cameraButton.image
     public static let profile_default: UIImage = ASAPKitAsset.Profile.profileDefault.image
+    
+    // privacy
+    public static let `public`: UIImage = ASAPKitAsset.Privacy.public.image
+    public static let `private`: UIImage = ASAPKitAsset.Privacy.private.image
+    
+    // dissmissal content
+    public static let eye_tracking: UIImage = ASAPKitAsset.DissmisalContent.eyeTracking.image
+    public static let slide_to_unlock: UIImage = ASAPKitAsset.DissmisalContent.slideToUnlock.image
   }
 }
 // swiftlint: enable all

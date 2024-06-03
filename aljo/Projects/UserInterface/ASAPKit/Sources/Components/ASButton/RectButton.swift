@@ -105,11 +105,13 @@ public final class ASRectButton: UIButton {
       
       switch button.state {
       case .normal:
+        configuration?.background.strokeWidth = 1
         configuration?.background.strokeColor = .gray02
         configuration?.background.backgroundColor = .white
         configuration?.attributedTitle?[FontAttribute.self] = .pretendard(.body5)
         configuration?.attributedTitle?[ForegroundColorAttribute.self] = .black01
       case .selected:
+        configuration?.background.strokeWidth = 1.5
         configuration?.background.strokeColor = .red01
         configuration?.background.backgroundColor = .red02
         configuration?.attributedTitle?[FontAttribute.self] = .pretendard(.headLine6)

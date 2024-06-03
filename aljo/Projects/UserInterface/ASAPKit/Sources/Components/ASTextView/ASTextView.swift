@@ -34,16 +34,16 @@ extension String {
     guard let scalar = UnicodeScalar(self)?.value else {
       return false
     }
-
+    
     return consonantScalarRange ~= scalar
   }
-
+  
   var isVowel: Bool {
     let consonantScalarRange: ClosedRange<UInt32> = 12623...12643
     guard let scalar = UnicodeScalar(self)?.value else {
       return false
     }
-
+    
     return consonantScalarRange ~= scalar
   }
 }
@@ -95,7 +95,8 @@ public class ASTextView: UIView {
   // MARK: VIEW PROPERTIES
   internal let textView: UITextView = {
     let textView = UITextView()
-    textView.textColor = .black04
+    textView.textColor = .black01
+    textView.font = .pretendard(.body3)
     textView.autocorrectionType = .no
     textView.autocapitalizationType = .none
     return textView
@@ -109,13 +110,15 @@ public class ASTextView: UIView {
     return label
   }()
   
-  // MARK: PROPERTIES
-  /// 태두리 색상을 변경합니다.
-  public var borderColor: UIColor? {
-    get { return UIColor(coreColor: layer.borderColor) }
-    set { self.layer.borderColor = newValue?.cgColor }
-  }
+  private let placeholderLabel: UILabel = {
+    let label = UILabel()
+    label.font = .pretendard(.body3)
+    label.textColor = .black04
+    label.isHidden = true
+    return label
+  }()
   
+  // MARK: PROPERTIES
   /// 뷰 백그라운드 색상을 변경합니다.
   public var layerColor: UIColor? {
     get { return UIColor(coreColor: layer.backgroundColor) }
@@ -134,10 +137,17 @@ public class ASTextView: UIView {
   /// 본문에 작성된 글자의 세수를 세주는 뷰에 대해서 숨기는 여부를 결정합니다.
   public var isShowCount: Bool {
     get { return countLabel.isHidden }
-    set { configureUI(isShowCount: newValue == false) }
+    set { countLabel.isHidden = (newValue == false) }
   }
   
-  private var placeholder: String = ""
+  public var placeholder: String? {
+    get { placeholderLabel.text }
+    set { 
+      placeholderLabel.text = newValue
+      placeholderLabel.isHidden = false
+    }
+  }
+  
   private var maxLength: Int = 1
   
   // MARK: - INITIALIZER
@@ -145,32 +155,32 @@ public class ASTextView: UIView {
   /// - Parameters:
   ///   - placeholder: 본문이 비어있는 경우 표시될 글귀입니다. 기본값으로 제공되는 빈문자열을 통해서 생성하게 되면, 보여지지 않습니다.
   ///   - maxLength: 본문에 들어갈 수 있는 최대 글자수를 지정합니다. 0 이하의 수를 통해서 생성하게 되면, 최대 글자수가 1이 됩니다.
-  public convenience init(placeholder: String = "", maxLength: Int = .zero) {
+  public convenience init(maxLength: Int = .zero) {
     self.init(frame: .zero)
-    
-    self.placeholder = placeholder
+  
     self.maxLength = (maxLength == .zero) ? 1 : maxLength
     
     setUpSubViews()
-    
     textView.delegate = self
   }
 }
 
 extension ASTextView: UITextViewDelegate {
   public func textViewDidChange(_ textView: UITextView) {
+    placeholderLabel.isHidden = (textView.text.isEmpty == false)
     if textView.text.count > maxLength { textView.deleteBackward() }
     
     updateCountText(textView.text.count)
   }
   
   public func textViewDidBeginEditing(_ textView: UITextView) {
-    updateTextWhenEditingStart(textView.text == placeholder)
+    layer.borderColor = UIColor.black01.cgColor
+    layer.borderWidth = 1.5
   }
   
   public func textViewDidEndEditing(_ textView: UITextView) {
-    let text = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
-    updateTextWhenEditingEnd(text.isEmpty)
+    layer.borderColor = UIColor.gray02.cgColor
+    layer.borderWidth = 1
   }
   
   public func textView(
@@ -182,8 +192,8 @@ extension ASTextView: UITextViewDelegate {
     let changedText = currentText.replacingCharacters(in: range, with: text)
     
     if changedText.count <= maxLength { return true }
-
-    let lastCharacter = (currentText as String).last ?? Character("")
+    
+    let lastCharacter = (currentText as String).last ?? Character(".")
     let separatedCharacters = String(lastCharacter)
       .decomposedStringWithCanonicalMapping
       .unicodeScalars
@@ -203,71 +213,40 @@ private extension ASTextView {
       .color(.black04, of: "/ \(maxLength)")
       .color(.black01, of: "\(currentLength) ")
   }
-  
-  func updateTextWhenEditingEnd(_ isEmpty: Bool) {
-    if isEmpty == false { return }
-    
-    updateCountText(.zero)
-    self.textView.text = self.placeholder
-    self.textView.textColor = .black04
-  }
-  
-  func updateTextWhenEditingStart(_ isEqual: Bool) {
-    if isEqual == false { return }
-    
-    self.textView.text = nil
-    self.textView.textColor = .black01
-  }
 }
 
 // MARK: CONFIGURE UI METHODS
 private extension ASTextView {
-  func configureUI(isShowCount: Bool) {
-    subviews.forEach { $0.removeFromSuperview() }
+  func setUpSubViews() {
+    updateCountText(.zero)
+    tintColor = .red01
+    layer.borderColor = UIColor.gray02.cgColor
+    layer.borderWidth = 1
+    layer.cornerRadius = 6
     
-    if isShowCount {
-      showCountLabelConstraints()
-      return
-    }
-    
-    hideCountLabelCostraints()
+    configureHierarchy()
+    configureCostraints()
   }
   
-  func showCountLabelConstraints() {
-    addSubview(textView)
-    
-    textView.snp.makeConstraints {
-      $0.verticalEdges.equalToSuperview().inset(13)
-      $0.horizontalEdges.equalToSuperview().inset(16)
-    }
-    
-    countLabel.isHidden = true
+  func configureHierarchy() {
+    [textView, countLabel, placeholderLabel].forEach(addSubview)
   }
   
-  func hideCountLabelCostraints() {
-    [textView, countLabel].forEach(addSubview)
-    
+  func configureCostraints() {
     textView.snp.makeConstraints {
       $0.top.equalToSuperview().inset(13)
-      $0.horizontalEdges.equalToSuperview().inset(16)
-      $0.bottom.equalToSuperview().offset(-40)
+      $0.horizontalEdges.equalToSuperview().inset(11)
+      $0.bottom.equalToSuperview().offset(-43)
     }
     
     countLabel.snp.makeConstraints {
-      $0.top.equalTo(textView.snp.bottom).offset(15)
-      $0.horizontalEdges.equalToSuperview().inset(16)
-      $0.bottom.equalToSuperview().offset(-10)
+      $0.trailing.equalToSuperview().inset(16)
+      $0.bottom.equalToSuperview().offset(-11)
     }
     
-    countLabel.isHidden = false
-  }
-  
-  func setUpSubViews() {
-    textView.text = placeholder
-    textView.font = .pretendard(.body3)
-    updateCountText(.zero)
-    
-    layer.borderWidth = 1
-    layer.cornerRadius = 6
+    placeholderLabel.snp.makeConstraints {
+      $0.top.equalTo(textView.snp.top).inset(textView.textContainerInset.top)
+      $0.horizontalEdges.equalTo(textView.snp.horizontalEdges).inset(5)
+    }
   }
 }

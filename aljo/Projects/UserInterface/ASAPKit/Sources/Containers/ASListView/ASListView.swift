@@ -27,6 +27,24 @@ public final class ASListView: UIView {
     set { itemStackView.spacing = newValue }
   }
   
+  public var contentInset: UIEdgeInsets {
+    get { scrollView.contentInset }
+    set { scrollView.contentInset = newValue }
+  }
+  
+  public var contentOffset: CGPoint {
+    get { scrollView.contentOffset }
+    set { scrollView.contentOffset = newValue }
+  }
+  
+  public var contentOrigin: CGPoint {
+    itemStackView.frame.origin
+  }
+  
+  public var contentViews: [UIView] {
+    itemStackView.arrangedSubviews
+  }
+  
   public func addItem(_ item: UIView, title: String? = nil) {
     let headerBox = HeaderBox(contentView: item, title: title)
     itemStackView.addArrangedSubview(headerBox)
@@ -66,6 +84,7 @@ extension ASListView: UIScrollViewDelegate {
 extension ASListView {
   private func configureAction() {
     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapScrollView))
+    tapGesture.cancelsTouchesInView = false
     scrollView.addGestureRecognizer(tapGesture)
   }
   
